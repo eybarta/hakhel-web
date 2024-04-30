@@ -1,0 +1,44 @@
+@import 'primereact/resources/primereact.css';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';  
+/* @import 'primereact/resources/themes/lara-light-cyan/theme.css'; */
+/* @import 'primereact/resources/themes/tailwind-light/theme.css' */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700&display=swap');
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.he {
+	direction: rtl;
+	text-align: right;
+	* {
+		direction: rtl;
+	}
+}
+
+.p-error {
+	@apply leading-snug w-full block;
+}
+.p-inputtext {
+	@apply w-full;
+}
+
+.login-page {
+	background: #f1f1f1 url('/img/hakhel-bg.jpg') no-repeat center center / cover;
+}
+
+.app-page {
+	@apply pt-20 px-5;
+	background: #f1f1f1 url('/img/app-bg.jpg') no-repeat center center / cover;
+}
+
+.p-menubar {
+	@apply h-16 bg-blue-50 fixed w-full;
+}
