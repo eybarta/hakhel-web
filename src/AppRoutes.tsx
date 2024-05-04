@@ -6,6 +6,7 @@ import { hasToken } from './services/authService';
 import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import ManageDeceased from './pages/ManageDeceased';
+import ManageCemeteries from './pages/ManageCemeteries';
 
 const Home = React.lazy(() => import('./pages/Home'));
 const isAuthenticated = hasToken();
@@ -28,6 +29,7 @@ const AppRoutes = () => {
             }
           />
           <Route path='/deceased' element={<ManageDeceased />} />
+          <Route path='/cemeteries' element={<ManageCemeteries />} />
           <Route path='*' element={<NotFound />} />
         </Route>
         <Route path='/login' element={<Login />} />

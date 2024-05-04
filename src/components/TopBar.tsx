@@ -30,6 +30,8 @@ export default function TopBar() {
     {
       label: 'בתי עלמין',
       icon: 'pi pi-building-columns',
+      url: '/cemeteries',
+      className: location.pathname === '/cemeteries' ? 'active' : '', //location.pathname === '/deceased' ? 'bg-info-800' : ''
       // items: [
       // 		{
       // 				label: 'Components',

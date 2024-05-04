@@ -1,41 +1,45 @@
 // React + Locale
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 // PrimeReact UI components
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dialog, DialogPassThroughMethodOptions } from 'primereact/dialog';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 // App Components
-import FormEditDeceased from '/src/components/forms/FormEditDeceased';
+import FormEditCemetery from '/src/components/forms/FormEditCemetery';
 // State (Recoil)
-import { useRecoilValueLoadable } from 'recoil';
+import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import {
   cemeteriesDataSelector,
-  deceasedDataSelector,
+  cemeteriesFetchVersionAtom,
 } from '../services/state/selectors';
 
 // Types
-import { DeceasedPersonInterface } from '../types/deceased';
 import { CemeteryInterface } from '../types/cemeteries';
+import { Toast } from 'primereact/toast';
 
-const ManageDeceased = () => {
+const ManageCemeteries = () => {
   const { t } = useTranslation();
-  const [deceasedPeople, setDeceasedPeople] = useState();
+  const toast = useRef<Toast>(null);
+
   const [cemeteries, setCemeteries] = useState<CemeteryInterface[] | []>([]);
-  const [deceasedFormVisible, setDeceasedFormVisible] = useState(false);
-  const [deceasedInEdit, setDeceasedInEdit] = useState();
+  const [cemeteryFormVisible, setCemeteryFormVisible] = useState(false);
+  const [cemeteryInEdit, setCemeteryInEdit] =
+    useState<CemeteryInterface | null>(null);
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
-  const deceasedLoadable = useRecoilValueLoadable(deceasedDataSelector);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+
+  const refetchCemeteries = useSetRecoilState(
+    cemeteriesFetchVersionAtom('latest')
+  );
 
   const onGlobalFilterChange = e => {
     const value = e.target.value;
@@ -46,11 +50,6 @@ const ManageDeceased = () => {
 
   // Load data
   useEffect(() => {
-    if (deceasedLoadable.state === 'hasValue') {
-      setDeceasedPeople(deceasedLoadable.contents);
-    }
-  }, [deceasedLoadable.state, deceasedLoadable.contents]);
-  useEffect(() => {
     if (cemeteriesLoadable.state === 'hasValue') {
       setCemeteries(cemeteriesLoadable.contents);
     }
@@ -58,26 +57,36 @@ const ManageDeceased = () => {
   /////////////
 
   // Methods
-  const findCemetery = (id: number) => {
-    if (cemeteries) {
-      return cemeteries.find((c: CemeteryInterface) => c.id === id);
-    }
-    return null;
-  };
-  const deleteDeceased = (data: DeceasedPersonInterface) => {
-    console.log('deleteDeceased: ', data);
+  const deleteCemetery = (data: CemeteryInterface) => {
+    console.log('deleteCemetery: ', data);
   };
 
-  const editDeceased = (data: DeceasedPersonInterface) => {
-    console.log('editDeceased: ', data);
-    setDeceasedInEdit(data);
-    setDeceasedFormVisible(true);
+  const editCemetery = (data: CemeteryInterface) => {
+    console.log('editCemetery: ', data);
+    setCemeteryInEdit(data);
+    setCemeteryFormVisible(true);
+  };
+  const onSubmit = (result: CemeteryInterface) => {
+    console.log('result: ', result);
+    const summary = cemeteryInEdit
+      ? 'בית עלמין עודכן בהצלחה'
+      : 'בית עלמין הוסף בהצלחה';
+    setCemeteryInEdit(null);
+    refetchCemeteries(version => version + 1);
+    if (toast?.current) {
+      toast.current.show({
+        severity: 'success',
+        summary,
+      });
+    }
   };
   // UI Renderers
   const tableHeaderTemplate = () => {
     return (
       <div className='flex justify-between items-center'>
-        <h1 className='text-2xl font-semibold'>{t('Deceased people')}</h1>
+        <h1 className='text-2xl font-semibold'>
+          {t('Cemeteries information')}
+        </h1>
         <div className='flex items-center gap-2'>
           <IconField size={1} iconPosition='right'>
             <InputIcon className='pi pi-search'> </InputIcon>
@@ -92,9 +101,9 @@ const ManageDeceased = () => {
             raised
             outlined
             size='small'
-            label={t('Add deceased person')}
+            label={t('Add cemetery')}
             className='mr-2'
-            onClick={() => setDeceasedFormVisible(true)}
+            onClick={() => setCemeteryFormVisible(true)}
           />
         </div>
       </div>
@@ -104,24 +113,7 @@ const ManageDeceased = () => {
     return <div>{t('No data available')}</div>;
   };
 
-  const deceasedDateTemplate = (data: DeceasedPersonInterface) => {
-    const { hebrew_day_of_death, hebrew_month_of_death, hebrew_year_of_death } =
-      data;
-    return (
-      <span>{`${hebrew_day_of_death} ${hebrew_month_of_death} ${hebrew_year_of_death}`}</span>
-    );
-  };
-  const cemeteryTemplate = (data: DeceasedPersonInterface) => {
-    const { cemetery_id } = data;
-    const cemetery = findCemetery(cemetery_id);
-    if (cemetery) return <span>{cemetery.name}</span>;
-    return (
-      <div className='flex items-start'>
-        <ProgressSpinner pt={{ root: 'h-5 !w-5 !m-0' }} />
-      </div>
-    );
-  };
-  const rowActionsTemplate = (data: DeceasedPersonInterface) => {
+  const rowActionsTemplate = (data: CemeteryInterface) => {
     return (
       <div className='flex items-center gap-2 row-actions max-w-20'>
         <Button
@@ -131,7 +123,7 @@ const ManageDeceased = () => {
           text
           size='small'
           severity='secondary'
-          onClick={() => editDeceased(data)}
+          onClick={() => editCemetery(data)}
         />
         <Button
           icon='pi pi-trash'
@@ -140,7 +132,7 @@ const ManageDeceased = () => {
           size='small'
           severity='danger'
           text
-          onClick={() => deleteDeceased(data)}
+          onClick={() => deleteCemetery(data)}
         />
       </div>
     );
@@ -152,40 +144,41 @@ const ManageDeceased = () => {
           stripedRows
           scrollable
           scrollHeight='600px'
-          virtualScrollerOptions={{ itemSize: 46 }}
-          value={deceasedPeople}
+          value={cemeteries}
           header={tableHeaderTemplate}
-          loading={deceasedLoadable.state == 'loading'}
+          loading={cemeteriesLoadable.state == 'loading'}
           emptyMessage={emptyMessageTemplate}
           tableStyle={{ minWidth: '50rem' }}
           pt={{
             loadingOverlay: 'bg-gray-100/50',
           }}
-          rowClassName='data-table-row'
-          globalFilterFields={['first_name', 'last_name', 'cemetery.name']}
+          globalFilterFields={['name', 'description']}
           filters={filters}
         >
           <Column body={rowActionsTemplate}></Column>
-
-          <Column sortable field='first_name' header={t('First name')}></Column>
-          <Column sortable field='last_name' header={t('Last name')}></Column>
+          <Column sortable field='name' header={t('Name')}></Column>
           <Column
-            body={deceasedDateTemplate}
-            header={t('Date of Death')}
+            sortable
+            field='description'
+            header={t('Description')}
           ></Column>
-          <Column body={cemeteryTemplate} header={t('cemetery')}></Column>
         </DataTable>
       </Card>
+      <Toast ref={toast} />
       <Dialog
-        visible={deceasedFormVisible}
+        visible={cemeteryFormVisible}
         modal
-        onHide={() => setDeceasedFormVisible(false)}
+        onHide={() => setCemeteryFormVisible(false)}
         closeIcon
         content={({ hide }) => (
-          <FormEditDeceased propValues={deceasedInEdit} closeDialog={hide} />
+          <FormEditCemetery
+            propValues={cemeteryInEdit}
+            submit={onSubmit}
+            closeDialog={hide}
+          />
         )}
       ></Dialog>
     </div>
   );
 };
-export default ManageDeceased;
+export default ManageCemeteries;

@@ -31,6 +31,7 @@ const HebrewCalendar = ({ label, onChange }) => {
       const url = `https://www.hebcal.com/converter?cfg=json&start=${startDate}&end=${endDate}&g2h=1`;
       const response = await axios.get(url);
       const dates = response.data;
+      console.log('dates: ', dates);
       setHebrewDates(dates.hdates);
     };
 
@@ -66,6 +67,7 @@ const HebrewCalendar = ({ label, onChange }) => {
     return null;
   };
   const dateTemplate = dateMeta => {
+    // console.log('dateMeta: ', dateMeta);
     const dateParts = fetchHebrewDateParts(dateMeta);
     if (!dateParts) {
       return <span>-</span>;
@@ -76,7 +78,9 @@ const HebrewCalendar = ({ label, onChange }) => {
       </div>
     );
   };
-
+  const iconRenderTemplate = () => {
+    return <i className='pi pi-calendar text-white'></i>;
+  };
   return (
     <Calendar
       inputId='hebrewDate'
@@ -87,6 +91,7 @@ const HebrewCalendar = ({ label, onChange }) => {
       locale='he'
       showIcon
       className='w-full'
+      icon={iconRenderTemplate}
       pt={{ day: { className: 'cal-day' } }}
       formatDateTime={formatHebDate}
     />

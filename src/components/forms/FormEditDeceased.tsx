@@ -18,7 +18,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { useRecoilValueLoadable } from 'recoil';
 import { cemeteriesDataSelector } from '../../services/state/selectors';
 
-const DeceasedForm = ({ closeDialog, propValues = null }) => {
+const FormEditDeceased = ({ closeDialog, propValues = null }) => {
   console.log('closeDialog: ', closeDialog);
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
   const [cemeteriesOptions, updateCemeteriesOptions] = useState([]);
@@ -375,6 +375,7 @@ const DeceasedForm = ({ closeDialog, propValues = null }) => {
                 type='submit'
                 label={t('Save')}
                 className='w-full mt-5'
+                severity='info'
                 loading={isSubmitting}
               />
 
@@ -391,4 +392,4 @@ function isFieldInvalid(field, errors, touched) {
   return touched[field.name] && errors[field.name];
 }
 
-export default DeceasedForm;
+export default FormEditDeceased;
