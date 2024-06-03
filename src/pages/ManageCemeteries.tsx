@@ -1,6 +1,11 @@
 // React + Locale
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Global Contexts
+import { useToast } from '/src/components/context/ToastContext';
+import { useDialog } from '/src/components/context/DialogContext';
+
 // PrimeReact UI components
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -26,7 +31,8 @@ import { Toast } from 'primereact/toast';
 
 const ManageCemeteries = () => {
   const { t } = useTranslation();
-  const toast = useRef<Toast>(null);
+  const { showToast } = useToast();
+  const { showDialog, hideDialog } = useDialog();
 
   const [cemeteries, setCemeteries] = useState<CemeteryInterface[] | []>([]);
   const [cemeteryFormVisible, setCemeteryFormVisible] = useState(false);
@@ -34,19 +40,18 @@ const ManageCemeteries = () => {
     useState<CemeteryInterface | null>(null);
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
   const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: '', matchMode: FilterMatchMode.CONTAINS },
   });
 
   const refetchCemeteries = useSetRecoilState(
     cemeteriesFetchVersionAtom('latest')
   );
 
-  const onGlobalFilterChange = e => {
-    const value = e.target.value;
-    const _filters = { ...filters };
-    _filters.global.value = value;
-    setFilters(_filters);
-  };
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setFilters({
+      ...filters,
+      global: { ...filters.global, value: e.target.value },
+    });
 
   // Load data
   useEffect(() => {
@@ -61,24 +66,20 @@ const ManageCemeteries = () => {
     console.log('deleteCemetery: ', data);
   };
 
-  const editCemetery = (data: CemeteryInterface) => {
-    console.log('editCemetery: ', data);
-    setCemeteryInEdit(data);
-    setCemeteryFormVisible(true);
+  const editCemetery = (data: CemeteryInterface | null) => {
+    showDialog(
+      <FormEditCemetery
+        propValues={data}
+        closeDialog={hideDialog}
+        submit={onSubmit}
+      />
+    );
   };
   const onSubmit = (result: CemeteryInterface) => {
     console.log('result: ', result);
-    const summary = cemeteryInEdit
-      ? 'בית עלמין עודכן בהצלחה'
-      : 'בית עלמין הוסף בהצלחה';
-    setCemeteryInEdit(null);
+    const summary = 'בית עלמין עודכן בהצלחה';
     refetchCemeteries(version => version + 1);
-    if (toast?.current) {
-      toast.current.show({
-        severity: 'success',
-        summary,
-      });
-    }
+    showToast({ severity: 'success', summary });
   };
   // UI Renderers
   const tableHeaderTemplate = () => {
@@ -164,20 +165,6 @@ const ManageCemeteries = () => {
           ></Column>
         </DataTable>
       </Card>
-      <Toast ref={toast} />
-      <Dialog
-        visible={cemeteryFormVisible}
-        modal
-        onHide={() => setCemeteryFormVisible(false)}
-        closeIcon
-        content={({ hide }) => (
-          <FormEditCemetery
-            propValues={cemeteryInEdit}
-            submit={onSubmit}
-            closeDialog={hide}
-          />
-        )}
-      ></Dialog>
     </div>
   );
 };

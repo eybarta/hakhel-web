@@ -10,7 +10,6 @@ import ManageCemeteries from './pages/ManageCemeteries';
 
 const Home = React.lazy(() => import('./pages/Home'));
 const isAuthenticated = hasToken();
-console.log('RRRR isAuthenticated: ', isAuthenticated);
 
 const AppRoutes = () => {
   return (

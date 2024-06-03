@@ -1,24 +1,31 @@
 // React + Locale
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Global Contexts
+import { useToast } from '/src/components/context/ToastContext';
+import { useDialog } from '/src/components/context/DialogContext';
+
 // PrimeReact UI components
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
+
 // App Components
 import FormEditDeceased from '/src/components/forms/FormEditDeceased';
 // State (Recoil)
-import { useRecoilValueLoadable } from 'recoil';
+import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
+
 import {
   cemeteriesDataSelector,
   deceasedDataSelector,
+  deceasedFetchVersionAtom,
 } from '../services/state/selectors';
 
 // Types
@@ -27,22 +34,24 @@ import { CemeteryInterface } from '../types/cemeteries';
 
 const ManageDeceased = () => {
   const { t } = useTranslation();
-  const [deceasedPeople, setDeceasedPeople] = useState();
+  const { showToast } = useToast();
+  const { showDialog, hideDialog } = useDialog();
+  const [deceasedPeople, setDeceasedPeople] = useState<
+    DeceasedPersonInterface[] | []
+  >([]);
   const [cemeteries, setCemeteries] = useState<CemeteryInterface[] | []>([]);
-  const [deceasedFormVisible, setDeceasedFormVisible] = useState(false);
-  const [deceasedInEdit, setDeceasedInEdit] = useState();
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
   const deceasedLoadable = useRecoilValueLoadable(deceasedDataSelector);
   const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: '', matchMode: FilterMatchMode.CONTAINS },
   });
+  const refetchDeceased = useSetRecoilState(deceasedFetchVersionAtom('latest'));
 
-  const onGlobalFilterChange = e => {
-    const value = e.target.value;
-    const _filters = { ...filters };
-    _filters.global.value = value;
-    setFilters(_filters);
-  };
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setFilters({
+      ...filters,
+      global: { ...filters.global, value: e.target.value },
+    });
 
   // Load data
   useEffect(() => {
@@ -64,14 +73,23 @@ const ManageDeceased = () => {
     }
     return null;
   };
-  const deleteDeceased = (data: DeceasedPersonInterface) => {
-    console.log('deleteDeceased: ', data);
+  const deleteDeceased = (data: DeceasedPersonInterface) => {};
+
+  const editDeceased = (data: DeceasedPersonInterface | null) => {
+    showDialog(
+      <FormEditDeceased
+        propValues={data}
+        closeDialog={hideDialog}
+        submit={onSubmit}
+      />
+    );
   };
 
-  const editDeceased = (data: DeceasedPersonInterface) => {
-    console.log('editDeceased: ', data);
-    setDeceasedInEdit(data);
-    setDeceasedFormVisible(true);
+  const onSubmit = (result: DeceasedPersonInterface) => {
+    const summary = 'פרטי נפטר עודכנו בהצלחה';
+    refetchDeceased(version => version + 1);
+    showToast({ severity: 'success', summary });
+    hideDialog();
   };
   // UI Renderers
   const tableHeaderTemplate = () => {
@@ -94,7 +112,7 @@ const ManageDeceased = () => {
             size='small'
             label={t('Add deceased person')}
             className='mr-2'
-            onClick={() => setDeceasedFormVisible(true)}
+            onClick={() => editDeceased(null)}
           />
         </div>
       </div>
@@ -164,6 +182,7 @@ const ManageDeceased = () => {
           rowClassName='data-table-row'
           globalFilterFields={['first_name', 'last_name', 'cemetery.name']}
           filters={filters}
+          filterDisplay='row'
         >
           <Column body={rowActionsTemplate}></Column>
 
@@ -176,15 +195,6 @@ const ManageDeceased = () => {
           <Column body={cemeteryTemplate} header={t('cemetery')}></Column>
         </DataTable>
       </Card>
-      <Dialog
-        visible={deceasedFormVisible}
-        modal
-        onHide={() => setDeceasedFormVisible(false)}
-        closeIcon
-        content={({ hide }) => (
-          <FormEditDeceased propValues={deceasedInEdit} closeDialog={hide} />
-        )}
-      ></Dialog>
     </div>
   );
 };

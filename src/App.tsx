@@ -1,26 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import AppRoutes from './AppRoutes'
-import AppLayout from './layout/AppLayout'
-import TopBar from './components/TopBar'
-
+import './App.css';
+import AppRoutes from './AppRoutes';
+import AppLayout from './layout/AppLayout';
+import TopBar from './components/TopBar';
+import { ToastProvider } from './components/context/ToastContext';
+import { DialogProvider } from './components/context/DialogContext';
 function App() {
   // const [count, setCount] = useState(0)
 
   return (
-		<div className="w-full h-full">
-		{/* Possible global layout or providers */}
+    <ToastProvider>
+      <DialogProvider>
+        <div className='w-full h-full'>
+          {/* Possible global layout or providers */}
 
-		<AppLayout
-			header={<TopBar />}
-			footer={<div>footer</div>}
-		>
-			<AppRoutes />
-		</AppLayout>
-	</div>
-  )
+          <AppLayout header={<TopBar />} footer={<div>footer</div>}>
+            <AppRoutes />
+          </AppLayout>
+        </div>
+      </DialogProvider>
+    </ToastProvider>
+  );
 }
 
-export default App
+export default App;

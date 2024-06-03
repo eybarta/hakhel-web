@@ -7,6 +7,11 @@ export const cemeteriesFetchVersionAtom = atomFamily({
   key: 'cemeteriesFetchVersion',
   default: 0,
 });
+export const deceasedFetchVersionAtom = atomFamily({
+  key: 'deceasedFetchVersion',
+  default: 0,
+});
+
 export const cemeteriesDataSelector = selector({
   key: 'cemeteriesDataSelector',
   get: async ({ get }) => {
@@ -24,11 +29,15 @@ export const cemeteriesDataSelector = selector({
 
 export const deceasedDataSelector = selector({
   key: 'deceasedDataSelector',
-  get: async () => {
+  get: async ({ get }) => {
     try {
+      const version = get(deceasedFetchVersionAtom('latest'));
+      console.log('Deceased fetching version > ', version);
       const data = await fetchDeceasedPeople();
       return data;
     } catch (error) {
+      console.error('error: ', error);
+
       throw error;
     }
   },

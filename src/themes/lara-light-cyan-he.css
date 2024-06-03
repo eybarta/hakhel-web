@@ -4836,11 +4836,11 @@
   .p-confirm-popup .p-confirm-popup-message {
     margin-right: 1rem;
   }
-  .p-dialog {
+  /* .p-dialog {
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     border: 0 none;
-  }
+  } */
   .p-dialog .p-dialog-header {
     border-bottom: 0 none;
     background: #ffffff;

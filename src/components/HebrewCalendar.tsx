@@ -3,7 +3,17 @@ import { Calendar } from 'primereact/calendar';
 import { FloatLabel } from 'primereact/floatlabel';
 import axios from 'axios';
 
-const HebrewCalendar = ({ label, onChange }) => {
+interface HebrewCalendarInterface {
+  value: Date;
+  label: string;
+  onChange: (e: any) => void;
+}
+
+const HebrewCalendar = ({
+  value,
+  label = '',
+  onChange,
+}: HebrewCalendarInterface) => {
   const [date, setDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [hebrewDates, setHebrewDates] = useState({});
@@ -12,14 +22,22 @@ const HebrewCalendar = ({ label, onChange }) => {
   const getFormattedDate = (d: Date) => {
     if (!d) return;
     const date = d.year ? new Date(d.year, d.month, d.day) : d;
+
     const year = date.getFullYear();
+
     const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+
     const day = date.getDate();
     return `${year}-${month < 10 ? `0${month}` : month}-${
       day < 10 ? `0${day}` : day
     }`;
   };
 
+  useEffect(() => {
+    if (value) {
+      setSelectedDate(value);
+    }
+  }, []);
   // Fetch Hebrew dates for the current month
   useEffect(() => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -27,11 +45,12 @@ const HebrewCalendar = ({ label, onChange }) => {
 
     const fetchHebrewDates = async () => {
       const startDate = getFormattedDate(startOfMonth);
+
       const endDate = getFormattedDate(endOfMonth);
       const url = `https://www.hebcal.com/converter?cfg=json&start=${startDate}&end=${endDate}&g2h=1`;
       const response = await axios.get(url);
       const dates = response.data;
-      console.log('dates: ', dates);
+
       setHebrewDates(dates.hdates);
     };
 
@@ -39,9 +58,8 @@ const HebrewCalendar = ({ label, onChange }) => {
   }, [date]);
   useEffect(() => {
     const hebrewDateParts = fetchHebrewDateParts(selectedDate);
-    console.log('hebrewDateParts: ', hebrewDateParts);
+
     const hebrewDate = fetchHebrewDateParts(selectedDate, 'hebrew');
-    console.log('hebrewDate: ', hebrewDate);
 
     onChange(hebrewDateParts);
 
@@ -49,7 +67,6 @@ const HebrewCalendar = ({ label, onChange }) => {
   }, [selectedDate]);
 
   function dateChanged(e) {
-    console.log('e: ', e);
     setDate(e.value);
   }
 
@@ -60,14 +77,13 @@ const HebrewCalendar = ({ label, onChange }) => {
   const fetchHebrewDateParts = (dateMeta, requestedProp = 'heDateParts') => {
     const formattedDate = getFormattedDate(dateMeta);
     const hebrewDate = hebrewDates[formattedDate]; // Access the pre-fetched date
-    // console.log('hebrewDate: ', hebrewDate);
+    //
     if (hebrewDate) {
       return hebrewDate[requestedProp];
     }
     return null;
   };
   const dateTemplate = dateMeta => {
-    // console.log('dateMeta: ', dateMeta);
     const dateParts = fetchHebrewDateParts(dateMeta);
     if (!dateParts) {
       return <span>-</span>;
