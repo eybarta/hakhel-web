@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Card } from 'primereact/card';
@@ -7,53 +7,37 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { useTranslation } from 'react-i18next';
-import { FloatLabel } from 'primereact/floatlabel';
-import HebrewCalendar from '/src/components/HebrewCalendar.tsx';
-import { Message } from 'primereact/message';
-import { saveDeceasedPerson } from '/src/services/api/deceasedPeople';
+import HebrewCalendar from '@components/HebrewCalendar.tsx';
+import { saveDeceasedPerson } from '@services/api/deceasedPeople';
 
 import { TabView, TabPanel } from 'primereact/tabview';
 
+import { defaultDeceasedValues } from '@constants/defaultValues';
+
 // FROM STATE (Recoil)
-import { useRecoilValueLoadable } from 'recoil';
-import { cemeteriesDataSelector } from '../../services/state/selectors';
-import { DeceasedPersonInterface } from '../../types/deceased';
+import { useRecoilState, useRecoilValueLoadable } from 'recoil';
+import { cemeteriesAtom, cemeteriesDataSelector } from '@services/state';
+import { DeceasedPersonInterface } from '@type/deceased';
 
 interface FormEditDeceasedProps {
   closeDialog: () => void;
-  submit: (response: { deceased: DeceasedPersonInterface }) => void;
+  submit: (response: DeceasedPersonInterface) => void;
   propValues?: DeceasedPersonInterface | null; // Assuming it's optional and can be null
 }
 
-const FormEditDeceased = ({
+const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
   closeDialog,
   propValues = null,
   submit,
-}: FormEditDeceasedProps): void => {
-  console.log('closeDialog: ', closeDialog);
+}: FormEditDeceasedProps) => {
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
-  const [cemeteriesOptions, updateCemeteriesOptions] = useState([]);
-  const [loadingCemeteries, setLoadingCemeteries] = useState(false);
-  const [errorLoadingCemeteries, setError] = useState(false);
+  const [cemeteriesOptions, setCemeteries] = useRecoilState(cemeteriesAtom);
   useEffect(() => {
-    switch (cemeteriesLoadable.state) {
-      case 'hasValue':
-        setLoadingCemeteries(false);
-        updateCemeteriesOptions(cemeteriesLoadable.contents);
-        break;
-      case 'loading':
-        setLoadingCemeteries(true);
-        break;
-      case 'hasError':
-        setError(cemeteriesLoadable.contents.message);
-        break;
-      default:
-        setLoadingCemeteries(false);
+    if (cemeteriesLoadable.state === 'hasValue') {
+      setCemeteries(cemeteriesLoadable.contents);
     }
-  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents]);
-
+  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
   const { t } = useTranslation();
-  // const [formValues, setFormValues] = useState();
   const genders = [
     { label: t('Male'), value: 'male' },
     { label: t('Female'), value: 'female' },
@@ -76,23 +60,7 @@ const FormEditDeceased = ({
     ),
   });
 
-  const defaultValues = {
-    id: null,
-    first_name: '',
-    last_name: '',
-    gender: '',
-    father_first_name: '',
-    mother_first_name: '',
-    hebrew_year_of_death: '',
-    hebrew_month_of_death: '',
-    hebrew_day_of_death: '',
-    date_of_death: '',
-    cemetery_id: null,
-    cemetery_region: '',
-    cemetery_parcel: '',
-  };
-
-  const initialValues = propValues || defaultValues;
+  const initialValues = propValues || defaultDeceasedValues;
 
   const parseAndsetHebrewDates = (hebrewDateParts, setFieldValue) => {
     if (hebrewDateParts && setFieldValue) {
@@ -102,21 +70,18 @@ const FormEditDeceased = ({
       setFieldValue('hebrew_day_of_death', d);
     }
   };
-  const combineHebrewDateParts = (y, m, d) => {
-    console.log('y, m, d: ', y, m, d);
-    return { y, m, d };
-  };
 
-  const submitHandler = async (values, { setSubmitting }) => {
-    console.log('values: ', values);
-    setSubmitting(false);
+  const submitHandler = async (
+    values: DeceasedPersonInterface,
+    { setSubmitting }
+  ) => {
     const data = { deceased_person: values };
-    const response = await saveDeceasedPerson(data);
+    const response: DeceasedPersonInterface = await saveDeceasedPerson(data);
+
+    setSubmitting(false);
     submit(response);
     closeDialog();
-    console.log('SAVE DECEASED response: ', response);
   };
-  console.log('initialValues > ', initialValues);
 
   const renderCardTitle = () => {
     return (
@@ -136,9 +101,13 @@ const FormEditDeceased = ({
     );
   };
 
-  const loadingIconRenderTemplate = () => {
-    return <i className='pi pi-spin pi-spinner'></i>;
-  };
+  const getInitialDateValue = (date: string | null) =>
+    date ? new Date(date) : null;
+
+  function isFieldInvalid(field, errors, touched) {
+    return touched[field.name] && errors[field.name];
+  }
+
   return (
     <div className='flex justify-center items-center'>
       <Card
@@ -156,7 +125,7 @@ const FormEditDeceased = ({
               <TabView>
                 <TabPanel header={t('Deceased information')}>
                   <div className='flex flex-col gap-2.5'>
-                    <div className='flex items-center justify-between gap-5'>
+                    <div className='flex items-start justify-between gap-5'>
                       <Field name='first_name'>
                         {({ field }) => (
                           <div className='flex-1'>
@@ -215,7 +184,7 @@ const FormEditDeceased = ({
                         )}
                       </Field>
                     </div>
-                    <div className='flex items-center justify-between gap-5'>
+                    <div className='flex items-start justify-between gap-5'>
                       <Field name='gender'>
                         {({ field, form }) => (
                           <div>
@@ -240,7 +209,7 @@ const FormEditDeceased = ({
                                 ),
                               })}
                               onChange={e => {
-                                console.log(e.value); // for debugging
+                                // for debugging
                                 form.setFieldValue(field.name, e.value);
                               }}
                             />
@@ -265,7 +234,7 @@ const FormEditDeceased = ({
                             <HebrewCalendar
                               inputId='hebrewDate'
                               {...field}
-                              value={new Date(values.date_of_death)}
+                              value={getInitialDateValue(values.date_of_death)}
                               onChange={hebrewDateParts =>
                                 parseAndsetHebrewDates(
                                   hebrewDateParts,
@@ -318,7 +287,7 @@ const FormEditDeceased = ({
                             optionLabel='name'
                             optionValue='id'
                             onChange={e => {
-                              console.log(e.value); // for debugging
+                              // for debugging
                               form.setFieldValue(field.name, e.value);
                             }}
                           />
@@ -400,7 +369,7 @@ const FormEditDeceased = ({
                 className='w-full mt-5'
                 severity='info'
                 loading={isSubmitting}
-                loadingIcon={loadingIconRenderTemplate}
+                loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
               />
 
               {/* <Button severity='success' type="submit" label={t('Save')} className="mt-4" loading={isSubmitting} /> */}
@@ -411,9 +380,5 @@ const FormEditDeceased = ({
     </div>
   );
 };
-
-function isFieldInvalid(field, errors, touched) {
-  return touched[field.name] && errors[field.name];
-}
 
 export default FormEditDeceased;

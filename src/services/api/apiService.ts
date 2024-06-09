@@ -1,6 +1,6 @@
 // src/services/apiService.js
 import axios from 'axios';
-import { getToken, logout } from './authService';
+import { getToken, logout } from '@services/authService';
 
 const BASE_URL = 'https://hakhel-c99c0466c9a2.herokuapp.com/hke/api/v1/';
 
