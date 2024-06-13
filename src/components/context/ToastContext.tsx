@@ -1,13 +1,7 @@
-import React, {
-  createContext,
-  useContext,
-  useRef,
-  ReactNode,
-  RefObject,
-} from 'react';
+import React, { createContext, useContext, useRef, ReactNode } from 'react';
 import { Toast } from 'primereact/toast';
 
-interface ToastMessage {
+export interface ToastMessage {
   severity: 'success' | 'info' | 'warn' | 'error';
   summary: string;
   detail?: string;

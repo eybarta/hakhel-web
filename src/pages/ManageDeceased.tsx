@@ -1,79 +1,109 @@
 // React + Locale
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+// Types
+import type { DeceasedPersonInterface } from '@type/deceased';
+
 // Global Contexts
-import { useToast } from '/src/components/context/ToastContext';
-import { useDialog } from '/src/components/context/DialogContext';
+import { useToast } from '@components/context/ToastContext';
+import { useConfirm } from '@components/context/ConfirmContext';
+import { useDialog } from '@components/context/DialogContext';
 
-// PrimeReact UI components
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { ProgressSpinner } from 'primereact/progressspinner';
-import { FilterMatchMode } from 'primereact/api';
-import { InputText } from 'primereact/inputtext';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-
-// App Components
-import FormEditDeceased from '/src/components/forms/FormEditDeceased';
 // State (Recoil)
-import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
+import {
+  useRecoilValueLoadable,
+  useRecoilCallback,
+  useRecoilRefresher_UNSTABLE,
+  useRecoilState,
+  Snapshot,
+} from 'recoil';
 
 import {
-  cemeteriesDataSelector,
   deceasedDataSelector,
-  deceasedFetchVersionAtom,
-} from '../services/state/selectors';
+  deleteDeceasedSelector,
+  cemeteriesDataSelector,
+  deceasedPeopleAtom,
+  cemeteriesAtom,
+} from '@services/state';
 
-// Types
-import { DeceasedPersonInterface } from '../types/deceased';
-import { CemeteryInterface } from '../types/cemeteries';
+// Utils
+import useFindCemetery from '@utils/useFindCemetery';
+
+// PrimeReact UI components
+import { Card } from 'primereact/card';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { FilterMatchMode } from 'primereact/api';
+
+// App Components
+import DataTableWrapper from '@components/table/DataTableWrapper';
+import RowActions from '@components/table/RowActions';
+import FormEditDeceased from '@components/forms/FormEditDeceased';
+import ManageDeceasedTableHeader from '@components/table/templates/ManageDeceasedTableHeader';
 
 const ManageDeceased = () => {
   const { t } = useTranslation();
   const { showToast } = useToast();
   const { showDialog, hideDialog } = useDialog();
-  const [deceasedPeople, setDeceasedPeople] = useState<
-    DeceasedPersonInterface[] | []
-  >([]);
-  const [cemeteries, setCemeteries] = useState<CemeteryInterface[] | []>([]);
+  const { confirmPopup } = useConfirm();
+  const [deceasedPeople, setDeceasedPeople] =
+    useRecoilState(deceasedPeopleAtom);
+
+  const [cemeteries, setCemeteries] = useRecoilState(cemeteriesAtom);
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
   const deceasedLoadable = useRecoilValueLoadable(deceasedDataSelector);
-  const [filters, setFilters] = useState({
-    global: { value: '', matchMode: FilterMatchMode.CONTAINS },
-  });
-  const refetchDeceased = useSetRecoilState(deceasedFetchVersionAtom('latest'));
-
-  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFilters({
-      ...filters,
-      global: { ...filters.global, value: e.target.value },
-    });
+  const refreshDeceased = useRecoilRefresher_UNSTABLE(deceasedDataSelector);
 
   // Load data
   useEffect(() => {
     if (deceasedLoadable.state === 'hasValue') {
       setDeceasedPeople(deceasedLoadable.contents);
     }
-  }, [deceasedLoadable.state, deceasedLoadable.contents]);
+  }, [deceasedLoadable.state, deceasedLoadable.contents, setDeceasedPeople]);
   useEffect(() => {
     if (cemeteriesLoadable.state === 'hasValue') {
       setCemeteries(cemeteriesLoadable.contents);
     }
-  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents]);
+  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
   /////////////
 
-  // Methods
-  const findCemetery = (id: number) => {
-    if (cemeteries) {
-      return cemeteries.find((c: CemeteryInterface) => c.id === id);
+  const confirmDelete = async (
+    snapshot: Snapshot,
+    release: () => void,
+
+    id: number
+  ) => {
+    try {
+      await snapshot.getPromise(deleteDeceasedSelector(id));
+      refreshDeceased();
+      showToast({
+        severity: 'info',
+        summary: 'נפטר נמחק בהצלחה',
+      });
+    } catch (error) {
+      console.error('error: ', error);
+      showToast({
+        severity: 'error',
+        summary: 'ארעה שגיאה, בבקשה נסו שוב.',
+      });
+    } finally {
+      release();
     }
-    return null;
   };
-  const deleteDeceased = (data: DeceasedPersonInterface) => {};
+  const deleteDeceased = useRecoilCallback(
+    ({ snapshot }) =>
+      async (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+        const release = snapshot.retain();
+        confirmPopup({
+          target: e.currentTarget,
+          message: 'Are you sure you want to proceed?',
+          icon: 'pi pi-exclamation-triangle',
+          defaultFocus: 'accept',
+          accept: async () => await confirmDelete(snapshot, release, id),
+          reject: () => console.log('Rejected'),
+        });
+      }
+  );
 
   const editDeceased = (data: DeceasedPersonInterface | null) => {
     showDialog(
@@ -86,114 +116,90 @@ const ManageDeceased = () => {
   };
 
   const onSubmit = (result: DeceasedPersonInterface) => {
+    console.log('result: ', result);
     const summary = 'פרטי נפטר עודכנו בהצלחה';
-    refetchDeceased(version => version + 1);
-    showToast({ severity: 'success', summary });
+    refreshDeceased();
+    showToast({ severity: 'info', summary });
     hideDialog();
   };
-  // UI Renderers
+
+  // Table header, search, filter
+  const [filters, setFilters] = useState({
+    global: { value: '', matchMode: FilterMatchMode.CONTAINS },
+  });
+
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setFilters({
+      ...filters,
+      global: { ...filters.global, value: e.target.value },
+    });
+
   const tableHeaderTemplate = () => {
     return (
-      <div className='flex justify-between items-center'>
-        <h1 className='text-2xl font-semibold'>{t('Deceased people')}</h1>
-        <div className='flex items-center gap-2'>
-          <IconField size={1} iconPosition='right'>
-            <InputIcon className='pi pi-search'> </InputIcon>
-            <InputText
-              onChange={onGlobalFilterChange}
-              placeholder={t('Search')}
-            />
-          </IconField>
-          <Button
-            icon='pi pi-plus'
-            severity='info'
-            raised
-            outlined
-            size='small'
-            label={t('Add deceased person')}
-            className='mr-2'
-            onClick={() => editDeceased(null)}
-          />
-        </div>
-      </div>
+      <ManageDeceasedTableHeader
+        onSearch={onGlobalFilterChange}
+        onAdd={() => editDeceased(null)}
+      />
     );
-  };
-  const emptyMessageTemplate = () => {
-    return <div>{t('No data available')}</div>;
   };
 
-  const deceasedDateTemplate = (data: DeceasedPersonInterface) => {
-    const { hebrew_day_of_death, hebrew_month_of_death, hebrew_year_of_death } =
-      data;
-    return (
-      <span>{`${hebrew_day_of_death} ${hebrew_month_of_death} ${hebrew_year_of_death}`}</span>
-    );
-  };
-  const cemeteryTemplate = (data: DeceasedPersonInterface) => {
-    const { cemetery_id } = data;
-    const cemetery = findCemetery(cemetery_id);
-    if (cemetery) return <span>{cemetery.name}</span>;
-    return (
-      <div className='flex items-start'>
-        <ProgressSpinner pt={{ root: 'h-5 !w-5 !m-0' }} />
-      </div>
-    );
-  };
-  const rowActionsTemplate = (data: DeceasedPersonInterface) => {
-    return (
-      <div className='flex items-center gap-2 row-actions max-w-20'>
-        <Button
-          icon='pi pi-pencil'
-          rounded
-          outlined
-          text
-          size='small'
-          severity='secondary'
-          onClick={() => editDeceased(data)}
+  // util
+  const findCemetery = useFindCemetery(cemeteries);
+
+  const columns = [
+    {
+      body: (data: DeceasedPersonInterface) => (
+        <RowActions
+          data={data}
+          onEdit={editDeceased}
+          onDelete={deleteDeceased}
         />
-        <Button
-          icon='pi pi-trash'
-          rounded
-          outlined
-          size='small'
-          severity='danger'
-          text
-          onClick={() => deleteDeceased(data)}
-        />
-      </div>
-    );
-  };
+      ),
+    },
+    {
+      sortable: true,
+      field: 'first_name',
+      header: t('First name'),
+    },
+    {
+      sortable: true,
+      field: 'last_name',
+      header: t('Last name'),
+    },
+    {
+      body: (data: DeceasedPersonInterface) => {
+        const {
+          hebrew_day_of_death,
+          hebrew_month_of_death,
+          hebrew_year_of_death,
+        } = data;
+        return (
+          <span>{`${hebrew_day_of_death} ${hebrew_month_of_death} ${hebrew_year_of_death}`}</span>
+        );
+      },
+      header: t('Date of Death'),
+    },
+    {
+      body: (data: DeceasedPersonInterface) => {
+        const cemetery = findCemetery(data.cemetery_id);
+        return cemetery ? <span>{cemetery.name}</span> : <ProgressSpinner />;
+      },
+      header: t('Cemetery'),
+    },
+  ];
+
+  const fieldsToFilter = ['first_name', 'last_name', 'cemetery.name'];
   return (
     <div className='app-page h-screen w-screen'>
-      <Card pt={{ content: 'p-0' }} className='mt-3'>
-        <DataTable
-          stripedRows
-          scrollable
-          scrollHeight='600px'
-          virtualScrollerOptions={{ itemSize: 46 }}
-          value={deceasedPeople}
-          header={tableHeaderTemplate}
-          loading={deceasedLoadable.state == 'loading'}
-          emptyMessage={emptyMessageTemplate}
-          tableStyle={{ minWidth: '50rem' }}
-          pt={{
-            loadingOverlay: 'bg-gray-100/50',
-          }}
-          rowClassName='data-table-row'
-          globalFilterFields={['first_name', 'last_name', 'cemetery.name']}
+      <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
+        <DataTableWrapper
+          data={deceasedPeople}
+          loading={deceasedLoadable.state === 'loading'}
+          columns={columns}
           filters={filters}
-          filterDisplay='row'
-        >
-          <Column body={rowActionsTemplate}></Column>
-
-          <Column sortable field='first_name' header={t('First name')}></Column>
-          <Column sortable field='last_name' header={t('Last name')}></Column>
-          <Column
-            body={deceasedDateTemplate}
-            header={t('Date of Death')}
-          ></Column>
-          <Column body={cemeteryTemplate} header={t('cemetery')}></Column>
-        </DataTable>
+          fieldsToFilter={fieldsToFilter}
+          headerTemplate={tableHeaderTemplate()}
+        />
       </Card>
     </div>
   );

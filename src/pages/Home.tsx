@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 const Home = memo(() => {
   return (
     <div className='app-page h-screen w-screen'>

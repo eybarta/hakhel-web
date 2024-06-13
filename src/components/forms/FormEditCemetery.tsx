@@ -1,15 +1,24 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import {
+  Formik,
+  Form,
+  Field,
+  ErrorMessage,
+  FormikHelpers,
+  FormikTouched,
+  FieldInputProps,
+  FormikErrors,
+} from 'formik';
 import * as Yup from 'yup';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { useTranslation } from 'react-i18next';
-import { saveCemetery } from '/src/services/api/cemeteries';
-import { CemeteryInterface } from '../../types/cemeteries';
+import { saveCemetery } from '@services/api/cemeteries';
+import { CemeteryInterface } from '@type//cemeteries';
 interface FormEditCemeteryProps {
   closeDialog: () => void;
-  submit: (response: { cemetery: CemeteryInterface }) => void;
+  submit: (response: CemeteryInterface) => void;
   propValues?: CemeteryInterface | null; // Assuming it's optional and can be null
 }
 
@@ -22,7 +31,7 @@ const FormEditCemetery = ({
   // Form validation schema
   const validationSchema = Yup.object({
     name: Yup.string().required(t('Name is required')),
-    description: Yup.string().required(t('Description is required')),
+    description: Yup.string(),
   });
 
   const defaultValues = {
@@ -35,7 +44,7 @@ const FormEditCemetery = ({
 
   const submitHandler = async (
     values: CemeteryInterface,
-    { setSubmitting }
+    { setSubmitting }: FormikHelpers<CemeteryInterface>
   ) => {
     setSubmitting(false);
     const data = { cemetery: values };
@@ -64,7 +73,7 @@ const FormEditCemetery = ({
   return (
     <div className='flex justify-center items-center'>
       <Card
-        pt={{ title: 'text-base' }}
+        pt={{ title: { className: 'text-base' } }}
         title={renderCardTitle}
         className='w-full max-w-3xl min-w-[580px]'
       >
@@ -77,7 +86,7 @@ const FormEditCemetery = ({
             <Form onSubmit={handleSubmit}>
               <div className='flex flex-col gap-2.5'>
                 <Field name='name'>
-                  {({ field }) => (
+                  {({ field }: { field: FieldInputProps<string> }) => (
                     <div className='flex-1'>
                       <label
                         className='block mb-1 font-semibold'
@@ -87,7 +96,6 @@ const FormEditCemetery = ({
                       </label>
                       <InputText
                         id='name'
-                        {...field}
                         className={classNames({
                           'p-invalid': isFieldInvalid(field, errors, touched),
                         })}
@@ -101,7 +109,7 @@ const FormEditCemetery = ({
                   )}
                 </Field>
                 <Field name='description'>
-                  {({ field }) => (
+                  {({ field }: { field: FieldInputProps<string> }) => (
                     <div className='flex-1'>
                       <label
                         className='block mb-1 font-semibold'
@@ -132,6 +140,7 @@ const FormEditCemetery = ({
                 className='w-full mt-5'
                 severity='info'
                 loading={isSubmitting}
+                loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
               />
             </Form>
           )}
@@ -141,8 +150,14 @@ const FormEditCemetery = ({
   );
 };
 
-function isFieldInvalid(field, errors, touched) {
-  return touched[field.name] && errors[field.name];
+function isFieldInvalid(
+  field: FieldInputProps<string>,
+  errors: FormikErrors<{ [key: string]: string }>,
+  touched: FormikTouched<{ [key: string]: boolean }>
+): boolean {
+  console.log('touched: ', touched);
+  console.log('errors: ', errors);
+  return !!touched[field.name] && !!errors[field.name];
 }
 
 export default FormEditCemetery;

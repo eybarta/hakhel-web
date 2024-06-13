@@ -37,12 +37,14 @@ i18n
           'Deceased people': 'פרטי נפטרים',
           'Add deceased person': 'הוספת נפטר',
           'Add cemetery': 'הוספת בית עלמין',
+          Cemeteries: 'בתי עלמין',
           cemetery: 'מקום קבורה',
           'Cemetery information': 'פרטי קבורה',
           'Cemeteries information': 'פרטי בתי עלמין',
           'Deceased information': 'פרטי נפטר',
           'Cemetery parcel': 'מספר חלקה',
           'Cemetery region': 'מספר גוש',
+
           'No data available': 'אין נתונים',
           Search: 'חיפוש',
           Name: 'שם',
@@ -59,7 +61,7 @@ i18n
     },
     debug: false, // toggle this to see logs for debugging
     saveMissing: true, // saves new keys to the translation file (useful during development)
-    missingKeyHandler: (lng, ns, key, fallbackValue) => {
+    missingKeyHandler: key => {
       return key; // This ensures that the key itself is returned if the translation is missing
     },
   });

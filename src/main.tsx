@@ -1,10 +1,8 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { PrimeReactProvider, locale, addLocale } from 'primereact/api';
 import { twMerge } from 'tailwind-merge';
 import { RecoilRoot } from 'recoil';
-import DataProvider from './services/state/DataProvider';
 
 import he from './locale/prime-he.json';
 import './base.css';

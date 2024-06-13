@@ -1,90 +1,104 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar } from 'primereact/calendar';
-import { FloatLabel } from 'primereact/floatlabel';
+import {
+  Calendar,
+  CalendarDateTemplateEvent,
+  CalendarViewChangeEvent,
+} from 'primereact/calendar';
 import axios from 'axios';
 
-interface HebrewCalendarInterface {
-  value: Date;
-  label: string;
-  onChange: (e: any) => void;
-}
+import type {
+  HebrewCalendarProps,
+  HebrewDates,
+  HebrewDateParts,
+  DateLike,
+} from '@type/hebrewCalendarTypes';
 
-const HebrewCalendar = ({
-  value,
-  label = '',
-  onChange,
-}: HebrewCalendarInterface) => {
-  const [date, setDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [hebrewDates, setHebrewDates] = useState({});
+const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
+  const [monthViewDate, setMonthViewDate] = useState<Date>(value || new Date());
+  const [selectedRawDate, setSelectedRawDate] = useState<Date | null>(value);
+  const [hebrewDates, setHebrewDates] = useState<HebrewDates>({});
 
   // Helper to format date as YYYY-MM-DD
-  const getFormattedDate = (d: Date) => {
-    if (!d) return;
-    const date = d.year ? new Date(d.year, d.month, d.day) : d;
+  const getFormattedDate = (d: DateLike): string | undefined => {
+    if (!d) return undefined;
+    const date = d instanceof Date ? d : new Date(d.year, d.month, d.day);
 
     const year = date.getFullYear();
-
     const month = date.getMonth() + 1; // JavaScript months are 0-indexed
-
     const day = date.getDate();
     return `${year}-${month < 10 ? `0${month}` : month}-${
       day < 10 ? `0${day}` : day
     }`;
   };
 
-  useEffect(() => {
-    if (value) {
-      setSelectedDate(value);
-    }
-  }, []);
   // Fetch Hebrew dates for the current month
   useEffect(() => {
-    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    if (typeof monthViewDate === 'string') return;
+    const startOfMonth = new Date(
+      monthViewDate.getFullYear(),
+      monthViewDate.getMonth(),
+      1
+    );
+
+    const endOfMonth = new Date(
+      monthViewDate.getFullYear(),
+      monthViewDate.getMonth() + 1,
+      0
+    );
 
     const fetchHebrewDates = async () => {
       const startDate = getFormattedDate(startOfMonth);
-
       const endDate = getFormattedDate(endOfMonth);
+
       const url = `https://www.hebcal.com/converter?cfg=json&start=${startDate}&end=${endDate}&g2h=1`;
       const response = await axios.get(url);
-      const dates = response.data;
+      const newDates = response.data;
 
-      setHebrewDates(dates.hdates);
+      setHebrewDates(newDates.hdates);
     };
 
     fetchHebrewDates();
-  }, [date]);
+  }, [monthViewDate]);
+
   useEffect(() => {
-    const hebrewDateParts = fetchHebrewDateParts(selectedDate);
+    if (selectedRawDate) {
+      const hebrewDateParts = fetchHebrewDateParts(selectedRawDate);
+      if (hebrewDateParts) onChange(hebrewDateParts);
+    }
+  }, [selectedRawDate, hebrewDates]); // Ensure this only runs when selectedRawDate or hebrewDates change
 
-    const hebrewDate = fetchHebrewDateParts(selectedDate, 'hebrew');
+  const monthViewChanged = (e: CalendarViewChangeEvent) => {
+    setMonthViewDate(e.value as Date);
+  };
 
-    onChange(hebrewDateParts);
+  const formatHebDate = (d: Date): string => {
+    return fetchHebrewFullDate(d) || '';
+  };
 
-    // HERE I CAN EMIT THE HEBREW DATE BACK TO PARENT?
-  }, [selectedDate]);
-
-  function dateChanged(e) {
-    setDate(e.value);
-  }
-
-  function formatHebDate(d) {
-    return fetchHebrewDateParts(d, 'hebrew') || '';
-  }
-
-  const fetchHebrewDateParts = (dateMeta, requestedProp = 'heDateParts') => {
-    const formattedDate = getFormattedDate(dateMeta);
-    const hebrewDate = hebrewDates[formattedDate]; // Access the pre-fetched date
-    //
+  const fetchHebrewFullDate = (date: Date): string => {
+    const formattedDate = getFormattedDate(date);
+    let hebrewDate;
+    if (formattedDate) {
+      hebrewDate = hebrewDates[formattedDate];
+      return hebrewDate?.hebrew || '';
+    }
+    return '';
+  };
+  const fetchHebrewDateParts = (date: Date): HebrewDateParts | null => {
+    const formattedDate = getFormattedDate(date);
+    const hebrewDate = formattedDate ? hebrewDates[formattedDate] : undefined; // Access the pre-fetched date
     if (hebrewDate) {
-      return hebrewDate[requestedProp];
+      return hebrewDate['heDateParts'] || null;
     }
     return null;
   };
-  const dateTemplate = dateMeta => {
-    const dateParts = fetchHebrewDateParts(dateMeta);
+
+  const dateTemplate = (
+    calendarDate: CalendarDateTemplateEvent
+  ): JSX.Element => {
+    const { day, month, year } = calendarDate;
+    const date = new Date(year, month, day);
+    const dateParts = fetchHebrewDateParts(date);
     if (!dateParts) {
       return <span>-</span>;
     }
@@ -94,20 +108,19 @@ const HebrewCalendar = ({
       </div>
     );
   };
-  const iconRenderTemplate = () => {
-    return <i className='pi pi-calendar text-white'></i>;
-  };
+
   return (
     <Calendar
       inputId='hebrewDate'
-      value={date}
-      onViewDateChange={dateChanged}
-      onChange={e => setSelectedDate(e.value)}
+      value={selectedRawDate ? new Date(selectedRawDate) : null}
+      onChange={e => setSelectedRawDate(e.value as Date)}
+      viewDate={monthViewDate}
+      onViewDateChange={monthViewChanged}
       dateTemplate={dateTemplate}
       locale='he'
       showIcon
       className='w-full'
-      icon={iconRenderTemplate}
+      icon={() => <i className='pi pi-calendar text-white'></i>}
       pt={{ day: { className: 'cal-day' } }}
       formatDateTime={formatHebDate}
     />
