@@ -16,19 +16,3 @@ afterAll(() => consoleSpy.mockRestore());
 afterEach(() => {
   mockAxios.reset();
 });
-// jest.setup.ts
-Object.defineProperty(window, 'localStorage', {
-  value: {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
-  },
-});
-
-Object.defineProperty(window, 'location', {
-  value: {
-    href: '',
-  },
-  writable: true,
-});
