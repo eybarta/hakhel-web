@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import {
+  Formik,
+  Form,
+  Field,
+  ErrorMessage,
+  FormikProps,
+  FieldInputProps,
+  FormikErrors,
+  FormikTouched,
+  FormikHelpers,
+} from 'formik';
 import * as Yup from 'yup';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
@@ -18,6 +28,7 @@ import { defaultDeceasedValues } from '@constants/defaultValues';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 import { cemeteriesAtom, cemeteriesDataSelector } from '@services/state';
 import { DeceasedPersonInterface } from '@type/deceased';
+import { HebrewDateParts } from '@type/hebrewCalendarTypes';
 
 interface FormEditDeceasedProps {
   closeDialog: () => void;
@@ -62,7 +73,10 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
 
   const initialValues = propValues || defaultDeceasedValues;
 
-  const parseAndsetHebrewDates = (hebrewDateParts, setFieldValue) => {
+  const parseAndsetHebrewDates = (
+    hebrewDateParts: HebrewDateParts,
+    setFieldValue: FormikHelpers<any>['setFieldValue']
+  ) => {
     if (hebrewDateParts && setFieldValue) {
       const { d, m, y } = hebrewDateParts;
       setFieldValue('hebrew_year_of_death', y);
@@ -73,7 +87,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
 
   const submitHandler = async (
     values: DeceasedPersonInterface,
-    { setSubmitting }
+    { setSubmitting }: { setSubmitting: FormikHelpers<any>['setSubmitting'] }
   ) => {
     const data = { deceased_person: values };
     const response: DeceasedPersonInterface = await saveDeceasedPerson(data);
@@ -104,14 +118,24 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
   const getInitialDateValue = (date: string | null) =>
     date ? new Date(date) : null;
 
-  function isFieldInvalid(field, errors, touched) {
-    return touched[field.name] && errors[field.name];
+  function isFieldInvalid(
+    field: FieldInputProps<string>,
+    errors: FormikErrors<{ [key: string]: string }>,
+    touched: FormikTouched<{ [key: string]: boolean }>
+  ): boolean {
+    console.log('touched: ', touched);
+    console.log('errors: ', errors);
+    return !!touched[field.name] && !!errors[field.name];
   }
 
+  type FieldPropsInterface = {
+    field: FieldInputProps<string>;
+    form: FormikProps<{ [key: string]: string }>;
+  };
   return (
     <div className='flex justify-center items-center'>
       <Card
-        pt={{ title: 'text-base' }}
+        pt={{ title: { className: 'text-base' } }}
         title={renderCardTitle}
         className='w-full max-w-3xl min-w-[580px]'
       >
@@ -127,7 +151,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                   <div className='flex flex-col gap-2.5'>
                     <div className='flex items-start justify-between gap-5'>
                       <Field name='first_name'>
-                        {({ field }) => (
+                        {({ field }: FieldPropsInterface) => (
                           <div className='flex-1'>
                             <label
                               className='block mb-1 font-semibold'
@@ -155,7 +179,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                         )}
                       </Field>
                       <Field name='last_name'>
-                        {({ field }) => (
+                        {({ field }: FieldPropsInterface) => (
                           <div className='flex-1'>
                             <label
                               className='block mb-1 font-semibold'
@@ -186,7 +210,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                     </div>
                     <div className='flex items-start justify-between gap-5'>
                       <Field name='gender'>
-                        {({ field, form }) => (
+                        {({ field, form }: FieldPropsInterface) => (
                           <div>
                             <label
                               className='block mb-1 font-semibold'
@@ -195,7 +219,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                               {t('Select gender')}
                             </label>
                             <Dropdown
-                              pt={{ root: 'w-full' }}
+                              pt={{ root: { className: 'w-full' } }}
                               appendTo={'self'}
                               inputId='gender'
                               {...field}
@@ -204,13 +228,15 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                               className={classNames({
                                 'p-invalid': isFieldInvalid(
                                   field,
-                                  form.errors,
-                                  form.touched
+                                  form?.errors || {},
+                                  form?.touched || {}
                                 ),
                               })}
                               onChange={e => {
                                 // for debugging
-                                form.setFieldValue(field.name, e.value);
+                                if (form) {
+                                  form.setFieldValue(field.name, e.value);
+                                }
                               }}
                             />
 
@@ -223,7 +249,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                         )}
                       </Field>
                       <Field className='flex-1' name='hebrew_date_of_death'>
-                        {({ field, form }) => (
+                        {({ field, form }: FieldPropsInterface) => (
                           <div className='w-full'>
                             <label
                               className='block mb-1 font-semibold'
@@ -241,13 +267,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                                   form.setFieldValue
                                 )
                               }
-                              className={classNames({
-                                'p-invalid': isFieldInvalid(
-                                  field,
-                                  errors,
-                                  touched
-                                ),
-                              })}
                             />
                             <ErrorMessage
                               name='hebrew_year_of_death'
@@ -263,7 +282,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                 <TabPanel header={t('Cemetery information')}>
                   <div className='flex flex-col gap-2.5'>
                     <Field name='cemetery_id'>
-                      {({ field, form }) => (
+                      {({ field, form }: FieldPropsInterface) => (
                         <div>
                           <label
                             className='block mb-1 font-semibold'
@@ -272,7 +291,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                             {t('Select cemetery')}
                           </label>
                           <Dropdown
-                            pt={{ root: 'w-full' }}
+                            pt={{ root: { className: 'w-full' } }}
                             appendTo={'self'}
                             inputId='cemeteryId'
                             {...field}
@@ -301,7 +320,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                     </Field>
                     <div className='flex flex-wrap items-center gap-5'>
                       <Field name='cemetery_region'>
-                        {({ field, form }) => (
+                        {({ field }: FieldPropsInterface) => (
                           <div className='flex-1'>
                             <label
                               className='block mb-1 font-semibold'
@@ -330,7 +349,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                         )}
                       </Field>
                       <Field name='cemetery_parcel'>
-                        {({ field, form }) => (
+                        {({ field }: FieldPropsInterface) => (
                           <div className='flex-1'>
                             <label
                               className='block mb-1 font-semibold'

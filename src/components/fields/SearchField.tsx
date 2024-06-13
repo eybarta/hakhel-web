@@ -14,7 +14,11 @@ const SearchField = ({ onChange }: SearchFieldProps) => {
   return (
     <IconField size={1} iconPosition='right'>
       <InputIcon className='pi pi-search'> </InputIcon>
-      <InputText onChange={onChange} placeholder={t('Search')} />
+      <InputText
+        data-testid='search-input'
+        onChange={onChange}
+        placeholder={t('Search')}
+      />
     </IconField>
   );
 };

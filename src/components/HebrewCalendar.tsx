@@ -6,30 +6,12 @@ import {
 } from 'primereact/calendar';
 import axios from 'axios';
 
-interface HebrewCalendarProps {
-  value: Date | null;
-  label: string;
-  onChange: (date: any) => void;
-}
-
-interface HebrewDateParts {
-  d: string;
-  m: string;
-  y: string;
-}
-interface HebrewDate {
-  events?: string[];
-  hd: number;
-  heDateParts?: HebrewDateParts;
-  hebrew: string;
-  hm: string;
-  hy: number;
-}
-interface HebrewDates {
-  [key: string]: HebrewDate;
-}
-
-type DateLike = Date | { year: number; month: number; day: number };
+import type {
+  HebrewCalendarProps,
+  HebrewDates,
+  HebrewDateParts,
+  DateLike,
+} from '@type/hebrewCalendarTypes';
 
 const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
   const [monthViewDate, setMonthViewDate] = useState<Date>(value || new Date());
@@ -81,7 +63,7 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
   useEffect(() => {
     if (selectedRawDate) {
       const hebrewDateParts = fetchHebrewDateParts(selectedRawDate);
-      onChange(hebrewDateParts);
+      if (hebrewDateParts) onChange(hebrewDateParts);
     }
   }, [selectedRawDate, hebrewDates]); // Ensure this only runs when selectedRawDate or hebrewDates change
 

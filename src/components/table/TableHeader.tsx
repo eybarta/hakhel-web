@@ -15,7 +15,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   children,
 }) => {
   return (
-    <div className='flex justify-between items-center'>
+    <div role='banner' className='flex justify-between items-center'>
       <h1 className='text-2xl font-semibold'>{title}</h1>
       <div className='flex items-center gap-2'>
         {showSearch && <SearchField onChange={onSearch} />}

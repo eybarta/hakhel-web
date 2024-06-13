@@ -1,8 +1,12 @@
-module.exports = {
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+
+export default {
   preset: 'ts-jest',
-  testEnvironment: 'jest-environment-jsdom',
+	transform: {
+    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.cjs' }],
+	},
+	"setupFilesAfterEnv": ["<rootDir>/src/tests/jest.setup.ts"],
   moduleNameMapper: {
-		
 		'^@state/(.*)$': '<rootDir>/src/state/$1',
 		'^@utils/(.*)$': '<rootDir>/src/utils/$1',
 		'^@constants/(.*)$': '<rootDir>/src/constants/$1',
@@ -12,7 +16,13 @@ module.exports = {
 		'^@components/(.*)$': '<rootDir>/src/components/$1',
 		'^@services/(.*)$': '<rootDir>/src/services/$1',
 		'^@api/(.*)$': '<rootDir>/src/services/api/$1',
-    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+		 '^.+\\.(sass|css)$': '<rootDir>/__mocks__/styles.js',
   },
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'], // Updated to TypeScript file
+	"transformIgnorePatterns": [
+		"/node_modules/",
+		// "^.+\\.module\\.(css|sass|scss)$"
+	],
+	"testEnvironment": "jsdom",
+	"moduleFileExtensions": ["ts", "tsx", "js", "cjs", "jsx", "json", "node"]
+
 };

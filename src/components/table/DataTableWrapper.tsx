@@ -1,5 +1,5 @@
 // components/DataTableWrapper.tsx
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column, ColumnProps } from 'primereact/column';
 import type { FilterMatchMode } from 'primereact/api';

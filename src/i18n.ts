@@ -61,7 +61,7 @@ i18n
     },
     debug: false, // toggle this to see logs for debugging
     saveMissing: true, // saves new keys to the translation file (useful during development)
-    missingKeyHandler: (lng, ns, key, fallbackValue) => {
+    missingKeyHandler: key => {
       return key; // This ensures that the key itself is returned if the translation is missing
     },
   });
