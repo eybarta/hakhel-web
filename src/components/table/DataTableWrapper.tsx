@@ -39,11 +39,21 @@ const DataTableWrapper = <T extends object>({
       scrollHeight='600px'
       virtualScrollerOptions={{ itemSize: 46 }}
       tableStyle={{ minWidth: '50rem' }}
-      pt={{ loadingOverlay: { className: 'bg-gray-100/50' } }}
+      pt={{
+        loadingOverlay: { className: 'bg-gray-100/50' },
+        bodyRow: { role: 'row' },
+        tbody: { role: 'tbody' },
+      }}
       rowClassName={() => 'data-table-row'}
     >
       {columns.map((col, index) => (
-        <Column key={index} {...col} />
+        <Column
+          pt={{
+            bodyCell: { role: 'cell' },
+          }}
+          key={index}
+          {...col}
+        />
       ))}
     </DataTable>
   );
