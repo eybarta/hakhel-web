@@ -151,7 +151,7 @@ const ManageCemeteries = () => {
 
   return (
     <div className='app-page h-screen w-screen'>
-      <Card pt={{ content: { clasName: 'p-0' } }} className='mt-3'>
+      <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
         <DataTableWrapper
           data={cemeteries}
           loading={cemeteriesLoadable.state === 'loading'}

@@ -1,21 +1,18 @@
-import {
-  Formik,
-  Form,
-  Field,
-  ErrorMessage,
-  FormikHelpers,
-  FormikTouched,
-  FieldInputProps,
-  FormikErrors,
-} from 'formik';
-import * as Yup from 'yup';
+import { Formik, Form, FormikHelpers } from 'formik';
 import { Card } from 'primereact/card';
-import { InputText } from 'primereact/inputtext';
+import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
-import { classNames } from 'primereact/utils';
 import { useTranslation } from 'react-i18next';
 import { saveCemetery } from '@services/api/cemeteries';
 import { CemeteryInterface } from '@type//cemeteries';
+import AddressFields from '@components/fields/AddressFields';
+import useHasErrors from '@utils/useHasErrors';
+import { addressFields } from '@constants/addressFields';
+import { cemeteryFields } from '@constants/cemeteryFields';
+import { defaultCemeteryValues } from '@constants/defaultValues';
+import useCemeteryValidation from '@validations/useCemeteryValidation';
+import InputField from '@components/fields/InputField';
+import FormError from './FormError';
 interface FormEditCemeteryProps {
   closeDialog: () => void;
   submit: (response: CemeteryInterface) => void;
@@ -29,19 +26,10 @@ const FormEditCemetery = ({
 }: FormEditCemeteryProps) => {
   const { t } = useTranslation();
   // Form validation schema
-  const validationSchema = Yup.object({
-    name: Yup.string().required(t('Name is required')),
-    description: Yup.string(),
-  });
+  const validationSchema = useCemeteryValidation();
 
-  const defaultValues = {
-    id: null,
-    name: '',
-    description: '',
-  };
-
-  const initialValues = propValues || defaultValues;
-
+  const initialValues = propValues || defaultCemeteryValues;
+  const hasErrors = useHasErrors();
   const submitHandler = async (
     values: CemeteryInterface,
     { setSubmitting }: FormikHelpers<CemeteryInterface>
@@ -82,66 +70,68 @@ const FormEditCemetery = ({
           validationSchema={validationSchema}
           onSubmit={submitHandler}
         >
-          {({ handleSubmit, errors, touched, isSubmitting }) => (
-            <Form onSubmit={handleSubmit}>
-              <div className='flex flex-col gap-2.5'>
-                <Field name='name'>
-                  {({ field }: { field: FieldInputProps<string> }) => (
-                    <div className='flex-1'>
-                      <label
-                        className='block mb-1 font-semibold'
-                        htmlFor='name'
-                      >
-                        {t('Name')}
-                      </label>
-                      <InputText
-                        id='name'
-                        className={classNames({
-                          'p-invalid': isFieldInvalid(field, errors, touched),
-                        })}
-                      />
-                      <ErrorMessage
-                        name='name'
-                        component='div'
-                        className='p-error leading-none'
-                      />
-                    </div>
-                  )}
-                </Field>
-                <Field name='description'>
-                  {({ field }: { field: FieldInputProps<string> }) => (
-                    <div className='flex-1'>
-                      <label
-                        className='block mb-1 font-semibold'
-                        htmlFor='description'
-                      >
-                        {t('Description')}
-                      </label>
+          {({ handleSubmit, errors, touched, setTouched, isSubmitting }) => (
+            <Form
+              onSubmit={async e => {
+                e.preventDefault();
+                setTouched({}, true);
+                handleSubmit(e);
+              }}
+            >
+              <TabView>
+                <TabPanel
+                  header={t('Cemetery information')}
+                  pt={{
+                    headerAction: {
+                      className: hasErrors(errors, touched, cemeteryFields)
+                        ? 'text-red-500'
+                        : '',
+                    },
+                  }}
+                >
+                  <div className='flex flex-col gap-2.5'>
+                    <InputField
+                      value={initialValues.name}
+                      name='name'
+                      label='Name'
+                    ></InputField>
+                    <InputField
+                      name='description'
+                      label='Description'
+                      value={initialValues.description}
+                    ></InputField>
+                  </div>
+                </TabPanel>
+                <TabPanel
+                  contentClassName='max-h-96 overflow-auto'
+                  header={t('Address')}
+                  pt={{
+                    headerAction: {
+                      className: hasErrors(errors, touched, addressFields)
+                        ? 'text-red-500'
+                        : '',
+                    },
+                  }}
+                >
+                  <AddressFields
+                    prefix='address_attributes'
+                    errors={errors}
+                    touched={touched}
+                  />
+                </TabPanel>
+              </TabView>
 
-                      <InputText
-                        id='description'
-                        {...field}
-                        className={classNames({
-                          'p-invalid': isFieldInvalid(field, errors, touched),
-                        })}
-                      />
-                      <ErrorMessage
-                        name='description'
-                        component='div'
-                        className='p-error leading-none'
-                      />
-                    </div>
-                  )}
-                </Field>
+              <div className='px-5'>
+                <FormError errors={errors}></FormError>
+                <Button
+                  type='submit'
+                  label={t('Save')}
+                  className='w-full mt-5'
+                  severity='info'
+                  loading={isSubmitting}
+                  loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
+                />
               </div>
-              <Button
-                type='submit'
-                label={t('Save')}
-                className='w-full mt-5'
-                severity='info'
-                loading={isSubmitting}
-                loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
-              />
             </Form>
           )}
         </Formik>
@@ -149,15 +139,5 @@ const FormEditCemetery = ({
     </div>
   );
 };
-
-function isFieldInvalid(
-  field: FieldInputProps<string>,
-  errors: FormikErrors<{ [key: string]: string }>,
-  touched: FormikTouched<{ [key: string]: boolean }>
-): boolean {
-  console.log('touched: ', touched);
-  console.log('errors: ', errors);
-  return !!touched[field.name] && !!errors[field.name];
-}
 
 export default FormEditCemetery;

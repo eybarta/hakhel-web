@@ -15,6 +15,7 @@ export default defineConfig({
       '@api': path.resolve(__dirname, 'src/services/api'),
       '@type': path.resolve(__dirname, 'src/types'),
       '@constants': path.resolve(__dirname, 'src/constants'),
+      '@validations': path.resolve(__dirname, 'src/validations'),
     },
   },
 });

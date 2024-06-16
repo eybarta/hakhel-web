@@ -1,7 +1,10 @@
 export interface HebrewCalendarProps {
   inputId: string;
   value: Date | null;
-  onChange: (hebrewDateParts: HebrewDateParts) => void;
+  name: string;
+  label: string;
+  validationProp?: string;
+  // onChange: (hebrewDateParts: HebrewDateParts) => void;
 }
 
 export interface HebrewDateParts {

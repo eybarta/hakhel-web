@@ -16,7 +16,7 @@ export default {
 		'^@components/(.*)$': '<rootDir>/src/components/$1',
 		'^@services/(.*)$': '<rootDir>/src/services/$1',
 		'^@api/(.*)$': '<rootDir>/src/services/api/$1',
-		 '^.+\\.(sass|css)$': '<rootDir>/__mocks__/styles.js',
+		//  '^.+\\.(sass|css)$': '<rootDir>/__mocks__/styles.js',
   },
 	"transformIgnorePatterns": [
 		"/node_modules/",

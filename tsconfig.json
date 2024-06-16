@@ -30,8 +30,10 @@
       "@api/*": ["services/api/*"],
       "@type/*": ["types/*"],
       "@constants/*": ["constants/*"],
+      "@validations/*": ["validations/*"],
+      "@mocks/*": ["src/__mocks__/*"],
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/__mocks__"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

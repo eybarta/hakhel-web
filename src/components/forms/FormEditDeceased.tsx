@@ -10,7 +10,6 @@ import {
   FormikTouched,
   FormikHelpers,
 } from 'formik';
-import * as Yup from 'yup';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -19,21 +18,25 @@ import { classNames } from 'primereact/utils';
 import { useTranslation } from 'react-i18next';
 import HebrewCalendar from '@components/HebrewCalendar.tsx';
 import { saveDeceasedPerson } from '@services/api/deceasedPeople';
-
 import { TabView, TabPanel } from 'primereact/tabview';
-
 import { defaultDeceasedValues } from '@constants/defaultValues';
-
-// FROM STATE (Recoil)
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 import { cemeteriesAtom, cemeteriesDataSelector } from '@services/state';
 import { DeceasedPersonInterface } from '@type/deceased';
-import { HebrewDateParts } from '@type/hebrewCalendarTypes';
-
+import AddressFields from '@components/fields/AddressFields.tsx';
+import useHasErrors from '@utils/useHasErrors';
+import { addressFields } from '@constants/addressFields';
+import { burialFields } from '@constants/cemeteryFields';
+import { deceasedFields } from '@constants/deceasedFields';
+import useDeceasedValidation from '@validations/useDeceasedValidation';
+import InputField from '@components/fields/InputField';
+import SelectField from '@components/fields/SelectField';
+import useSelectOptions from '@constants/selectOptions';
+import FormError from './FormError';
 interface FormEditDeceasedProps {
   closeDialog: () => void;
   submit: (response: DeceasedPersonInterface) => void;
-  propValues?: DeceasedPersonInterface | null; // Assuming it's optional and can be null
+  propValues?: DeceasedPersonInterface | null;
 }
 
 const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
@@ -43,55 +46,27 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
 }: FormEditDeceasedProps) => {
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
   const [cemeteriesOptions, setCemeteries] = useRecoilState(cemeteriesAtom);
+  const { t } = useTranslation();
+  const { genderOptions } = useSelectOptions();
+
+  const initialValues = propValues || defaultDeceasedValues;
+  const validationSchema = useDeceasedValidation();
   useEffect(() => {
     if (cemeteriesLoadable.state === 'hasValue') {
       setCemeteries(cemeteriesLoadable.contents);
     }
   }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
-  const { t } = useTranslation();
-  const genders = [
-    { label: t('Male'), value: 'male' },
-    { label: t('Female'), value: 'female' },
-  ];
-
-  // Form validation schema
-  const validationSchema = Yup.object({
-    first_name: Yup.string().required(t('First name is required')),
-    last_name: Yup.string().required(t('Last name is required')),
-    gender: Yup.string().required(t('Gender is required')),
-    cemetery_id: Yup.string().required(t('Cemetery is required')),
-    hebrew_year_of_death: Yup.string().required(
-      t('Hebrew date of death is required')
-    ),
-    hebrew_month_of_death: Yup.string().required(
-      t('Hebrew date of death is required')
-    ),
-    hebrew_day_of_death: Yup.string().required(
-      t('Hebrew date of death is required')
-    ),
-  });
-
-  const initialValues = propValues || defaultDeceasedValues;
-
-  const parseAndsetHebrewDates = (
-    hebrewDateParts: HebrewDateParts,
-    setFieldValue: FormikHelpers<any>['setFieldValue']
-  ) => {
-    if (hebrewDateParts && setFieldValue) {
-      const { d, m, y } = hebrewDateParts;
-      setFieldValue('hebrew_year_of_death', y);
-      setFieldValue('hebrew_month_of_death', m);
-      setFieldValue('hebrew_day_of_death', d);
-    }
-  };
 
   const submitHandler = async (
     values: DeceasedPersonInterface,
-    { setSubmitting }: { setSubmitting: FormikHelpers<any>['setSubmitting'] }
+    {
+      setSubmitting,
+    }: {
+      setSubmitting: FormikHelpers<any>['setSubmitting'];
+    }
   ) => {
     const data = { deceased_person: values };
     const response: DeceasedPersonInterface = await saveDeceasedPerson(data);
-
     setSubmitting(false);
     submit(response);
     closeDialog();
@@ -123,8 +98,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
     errors: FormikErrors<{ [key: string]: string }>,
     touched: FormikTouched<{ [key: string]: boolean }>
   ): boolean {
-    console.log('touched: ', touched);
-    console.log('errors: ', errors);
     return !!touched[field.name] && !!errors[field.name];
   }
 
@@ -132,6 +105,8 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
     field: FieldInputProps<string>;
     form: FormikProps<{ [key: string]: string }>;
   };
+
+  const hasErrors = useHasErrors();
   return (
     <div className='flex justify-center items-center'>
       <Card
@@ -144,142 +119,69 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
           validationSchema={validationSchema}
           onSubmit={submitHandler}
         >
-          {({ values, handleSubmit, errors, touched, isSubmitting }) => (
-            <Form onSubmit={handleSubmit}>
+          {({
+            values,
+            handleSubmit,
+            errors,
+            touched,
+            isSubmitting,
+            setTouched,
+          }) => (
+            <Form
+              onSubmit={async e => {
+                e.preventDefault();
+                setTouched({}, true);
+                handleSubmit(e);
+              }}
+            >
               <TabView>
-                <TabPanel header={t('Deceased information')}>
+                <TabPanel
+                  header={t('Deceased information')}
+                  pt={{
+                    headerAction: {
+                      className: hasErrors(errors, touched, deceasedFields)
+                        ? 'text-red-500'
+                        : '',
+                    },
+                  }}
+                >
                   <div className='flex flex-col gap-2.5'>
                     <div className='flex items-start justify-between gap-5'>
-                      <Field name='first_name'>
-                        {({ field }: FieldPropsInterface) => (
-                          <div className='flex-1'>
-                            <label
-                              className='block mb-1 font-semibold'
-                              htmlFor='firstName'
-                            >
-                              {t('First name')}
-                            </label>
-                            <InputText
-                              id='firstName'
-                              {...field}
-                              className={classNames({
-                                'p-invalid': isFieldInvalid(
-                                  field,
-                                  errors,
-                                  touched
-                                ),
-                              })}
-                            />
-                            <ErrorMessage
-                              name='first_name'
-                              component='div'
-                              className='p-error leading-none'
-                            />
-                          </div>
-                        )}
-                      </Field>
-                      <Field name='last_name'>
-                        {({ field }: FieldPropsInterface) => (
-                          <div className='flex-1'>
-                            <label
-                              className='block mb-1 font-semibold'
-                              htmlFor='lastName'
-                            >
-                              {t('Last name')}
-                            </label>
-
-                            <InputText
-                              id='lastName'
-                              {...field}
-                              className={classNames({
-                                'p-invalid': isFieldInvalid(
-                                  field,
-                                  errors,
-                                  touched
-                                ),
-                              })}
-                            />
-                            <ErrorMessage
-                              name='last_name'
-                              component='div'
-                              className='p-error leading-none'
-                            />
-                          </div>
-                        )}
-                      </Field>
+                      <InputField
+                        name='first_name'
+                        label='First name'
+                      ></InputField>
+                      <InputField
+                        name='last_name'
+                        label='Last name'
+                      ></InputField>
                     </div>
                     <div className='flex items-start justify-between gap-5'>
-                      <Field name='gender'>
-                        {({ field, form }: FieldPropsInterface) => (
-                          <div>
-                            <label
-                              className='block mb-1 font-semibold'
-                              htmlFor='gender'
-                            >
-                              {t('Select gender')}
-                            </label>
-                            <Dropdown
-                              pt={{ root: { className: 'w-full' } }}
-                              appendTo={'self'}
-                              inputId='gender'
-                              {...field}
-                              options={genders}
-                              placeholder={t('Select gender')}
-                              className={classNames({
-                                'p-invalid': isFieldInvalid(
-                                  field,
-                                  form?.errors || {},
-                                  form?.touched || {}
-                                ),
-                              })}
-                              onChange={e => {
-                                // for debugging
-                                if (form) {
-                                  form.setFieldValue(field.name, e.value);
-                                }
-                              }}
-                            />
-
-                            <ErrorMessage
-                              name='gender'
-                              component='div'
-                              className='p-error leading-none'
-                            />
-                          </div>
-                        )}
-                      </Field>
-                      <Field className='flex-1' name='hebrew_date_of_death'>
-                        {({ field, form }: FieldPropsInterface) => (
-                          <div className='w-full'>
-                            <label
-                              className='block mb-1 font-semibold'
-                              htmlFor='hebrewDate'
-                            >
-                              {t('Date of Death')}
-                            </label>
-                            <HebrewCalendar
-                              inputId='hebrewDate'
-                              {...field}
-                              value={getInitialDateValue(values.date_of_death)}
-                              onChange={hebrewDateParts =>
-                                parseAndsetHebrewDates(
-                                  hebrewDateParts,
-                                  form.setFieldValue
-                                )
-                              }
-                            />
-                            <ErrorMessage
-                              name='hebrew_year_of_death'
-                              component='div'
-                              className='p-error'
-                            />
-                          </div>
-                        )}
-                      </Field>
+                      <SelectField
+                        name='gender'
+                        label='Select gender'
+                        options={genderOptions}
+                      ></SelectField>
+                      <HebrewCalendar
+                        inputId='hebrewDate'
+                        label='Date of Death'
+                        name='date_of_death'
+                        validationProp='date_of_death'
+                        value={getInitialDateValue(values.date_of_death)}
+                      />
                     </div>
                   </div>
                 </TabPanel>
-                <TabPanel header={t('Cemetery information')}>
+                <TabPanel
+                  header={t('Cemetery information')}
+                  pt={{
+                    headerAction: {
+                      className: hasErrors(errors, touched, burialFields)
+                        ? 'text-red-500'
+                        : '',
+                    },
+                  }}
+                >
                   <div className='flex flex-col gap-2.5'>
                     <Field name='cemetery_id'>
                       {({ field, form }: FieldPropsInterface) => (
@@ -305,13 +207,12 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                             })}
                             optionLabel='name'
                             optionValue='id'
-                            onChange={e => {
-                              // for debugging
-                              form.setFieldValue(field.name, e.value);
-                            }}
+                            onChange={e =>
+                              form.setFieldValue(field.name, e.value)
+                            }
                           />
                           <ErrorMessage
-                            name='cemetery'
+                            name='cemetery_id'
                             component='div'
                             className='p-error leading-none'
                           />
@@ -328,7 +229,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                             >
                               {t('Cemetery region')}
                             </label>
-
                             <InputText
                               id='cemeteryRegion'
                               {...field}
@@ -357,7 +257,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                             >
                               {t('Cemetery parcel')}
                             </label>
-
                             <InputText
                               id='cemeteryParcel'
                               {...field}
@@ -381,17 +280,17 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                   </div>
                 </TabPanel>
               </TabView>
-
-              <Button
-                type='submit'
-                label={t('Save')}
-                className='w-full mt-5'
-                severity='info'
-                loading={isSubmitting}
-                loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
-              />
-
-              {/* <Button severity='success' type="submit" label={t('Save')} className="mt-4" loading={isSubmitting} /> */}
+              <div className='px-5'>
+                <FormError errors={errors}></FormError>
+                <Button
+                  type='submit'
+                  label={t('Save')}
+                  className='w-full mt-5'
+                  severity='info'
+                  loading={isSubmitting}
+                  loadingIcon={<i className='pi pi-spin pi-spinner'></i>}
+                />
+              </div>
             </Form>
           )}
         </Formik>

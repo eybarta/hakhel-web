@@ -307,7 +307,8 @@
     opacity: 0.6;
   }
   .p-error {
-    color: #e24c4c;
+		@apply text-red-500;
+    /* color: #e24c4c; */
   }
   .p-text-secondary {
     color: #6b7280;
@@ -2489,9 +2490,7 @@
     color: #64748b;
   }
   .p-button.p-button-info, .p-button-group.p-button-info > .p-button, .p-splitbutton.p-button-info > .p-button, .p-fileupload-choose.p-button-info {
-    color: #ffffff;
-    background: #0ea5e9;
-    border: 1px solid #0ea5e9;
+		@apply text-white bg-blue-400 border-blue-400;
   }
   .p-button.p-button-info:not(:disabled):hover, .p-button-group.p-button-info > .p-button:not(:disabled):hover, .p-splitbutton.p-button-info > .p-button:not(:disabled):hover, .p-fileupload-choose.p-button-info:not(:disabled):hover {
     background: #0284c7;
@@ -4724,22 +4723,25 @@
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-width: 0 0 2px 0;
+		@apply flex items-end;
   }
   .p-tabview .p-tabview-nav li {
     margin-left: 0;
+		@apply -mb-0.5 ml-0 h-8;
   }
   .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-    border: solid #e5e7eb;
+		@apply cursor-pointer border-gray-200 border-b-2 bg-white text-gray-400 px-3.5 rounded-t-lg h-full flex;
+    /* border: solid #e5e7eb;
     border-width: 0 0 2px 0;
     border-color: transparent transparent #e5e7eb transparent;
     background: #ffffff;
     color: #6b7280;
-    padding: 1.25rem;
+    padding: 0 1.25rem;
     font-weight: 700;
     border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    border-top-right-radius: 6px; */
     transition: box-shadow 0.2s;
-    margin: 0 0 -2px 0;
+    /* margin: 0 0 -1px 0; */
   }
   .p-tabview .p-tabview-nav li .p-tabview-nav-link:not(.p-disabled):focus-visible {
     outline: 0 none;

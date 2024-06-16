@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@types/lodash':
+        specifier: ^4.17.5
+        version: 4.17.5
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -20,6 +23,9 @@ importers:
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       primeflex:
         specifier: ^3.3.1
         version: 3.3.1
@@ -1311,6 +1317,9 @@ packages:
 
   '@types/jsdom@20.0.1':
     resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
+
+  '@types/lodash@4.17.5':
+    resolution: {integrity: sha512-MBIOHVZqVqgfro1euRDWX7OO0fBVUUMrN6Pwm8LQsz8cWhEpihlvR70ENj3f40j58TNxZaWv2ndSkInykNBBJw==}
 
   '@types/node@20.14.2':
     resolution: {integrity: sha512-xyu6WAMVwv6AKFLB+e/7ySZVr/0zLCzOa7rSpq6jNwpqOrUbcACDWC+53d4n2QHOnDou0fbIsg8wZu/sxrnI4Q==}
@@ -5059,6 +5068,8 @@ snapshots:
       '@types/node': 20.14.2
       '@types/tough-cookie': 4.0.5
       parse5: 7.1.2
+
+  '@types/lodash@4.17.5': {}
 
   '@types/node@20.14.2':
     dependencies:
