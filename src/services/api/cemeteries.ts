@@ -1,5 +1,5 @@
-import { CemeteryInterface } from '@type/cemeteries';
-import { CemeteryInterface } from '@type//cemeteries.ts';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
 import api from '@api/apiService.ts';
 
 type CemeteryServerInterface = {

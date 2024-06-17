@@ -4,7 +4,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
 import { saveCemetery } from '@services/api/cemeteries';
-import { CemeteryInterface } from '@type//cemeteries';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
 import AddressFields from '@components/fields/AddressFields';
 import useHasErrors from '@utils/useHasErrors';
 import { addressFields } from '@constants/addressFields';

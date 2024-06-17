@@ -1,4 +1,7 @@
-import { CemeteryInterface, CemeteryServerInterface } from '@type/cemeteries';
+import {
+  CemeteryInterface,
+  CemeteryServerInterface,
+} from '@type/cemeteriesInterface';
 
 // Format deceased from client to server interface
 const useFormatCemetery = (

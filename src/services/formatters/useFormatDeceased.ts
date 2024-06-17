@@ -1,7 +1,7 @@
 import {
   DeceasedPersonInterface,
   DeceasedPersonServerInterface,
-} from '@type/deceased';
+} from '@type/deceasedInterface';
 
 // Format deceased from client to server interface
 const useFormatDeceased = (

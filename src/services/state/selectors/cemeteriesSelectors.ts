@@ -2,7 +2,7 @@ import { selector, selectorFamily } from 'recoil';
 import { fetchCemeteries, deleteCemetery } from '@api/cemeteries';
 import { cemeteriesAtom } from '@services/state/atoms/cemeteriesAtoms';
 import { Options } from '@type/options';
-import { CemeteryInterface } from '@type/cemeteries';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
 
 export const cemeteriesDataSelector = selector({
   key: 'cemeteriesDataSelector',

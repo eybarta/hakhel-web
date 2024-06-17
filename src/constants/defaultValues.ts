@@ -1,6 +1,6 @@
 import { AddressInterface } from '@type/addressInterface';
-import { CemeteryInterface } from './../types/cemeteries';
-import { DeceasedPersonInterface } from '@type/deceased';
+import { CemeteryInterface } from '../types/cemeteriesInterface';
+import { DeceasedPersonInterface } from '@type/deceasedInterface';
 
 export const defaultAddressValues: AddressInterface = {
   line1: '',

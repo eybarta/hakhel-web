@@ -1,7 +1,7 @@
 import {
   DeceasedPersonInterface,
   DeceasedPersonServerInterface,
-} from '@type/deceased.ts';
+} from '@type/deceasedInterface';
 import api from '@api/apiService.ts';
 
 export async function fetchDeceasedPeople() {

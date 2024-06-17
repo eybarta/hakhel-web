@@ -31,7 +31,7 @@ import DataTableWrapper from '@components/table/DataTableWrapper';
 import ManageCemeteriesTableHeader from '@components/table/templates/ManageCemeteriesTableHeader';
 
 // Types
-import type { CemeteryInterface } from '@type/cemeteries';
+import type { CemeteryInterface } from '@type/cemeteriesInterface';
 import { ColumnBodyOptions, ColumnPassThroughType } from 'primereact/column';
 import { PassThroughType } from 'primereact/utils';
 import { Button } from 'primereact/button';

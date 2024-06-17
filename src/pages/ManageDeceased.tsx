@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Types
-import type { DeceasedPersonInterface } from '@type/deceased';
+import type { DeceasedPersonInterface } from '@type/deceasedInterface';
 
 // Global Contexts
 import { useToast } from '@components/context/ToastContext';

@@ -9,7 +9,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { defaultDeceasedValues } from '@constants/defaultValues';
 import { useRecoilValue } from 'recoil';
 import { cemeteryOptionsSelector } from '@services/state';
-import { DeceasedPersonInterface } from '@type/deceased';
+import { DeceasedPersonInterface } from '@type/deceasedInterface';
 import useHasErrors from '@utils/useHasErrors';
 import { burialFields } from '@constants/cemeteryFields';
 import { deceasedFields } from '@constants/deceasedFields';
