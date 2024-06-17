@@ -77,7 +77,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
             touched,
             isSubmitting,
             setTouched,
-            dirty,
           }) => (
             <Form
               onSubmit={async e => {

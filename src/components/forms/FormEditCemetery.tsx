@@ -68,18 +68,15 @@ const FormEditCemetery = ({
         <Formik
           initialValues={transformedInitialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values, { setSubmitting }) => {
-            await submitHandler(values);
-            setSubmitting(false);
-          }}
+          onSubmit={submitHandler}
         >
           {({ handleSubmit, errors, touched, setTouched, isSubmitting }) => (
             <Form
-            // onSubmit={async e => {
-            //   e.preventDefault();
-            //   setTouched({}, true);
-            //   handleSubmit(e);
-            // }}
+              onSubmit={async e => {
+                e.preventDefault();
+                setTouched({}, true);
+                handleSubmit(e);
+              }}
             >
               <TabView>
                 <TabPanel

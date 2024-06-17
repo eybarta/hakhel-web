@@ -26,6 +26,7 @@ const useSubmitForm = <T, R>({
     }
   ) => {
     try {
+      // console.log('setSubmitting: ', setSubmitting);
       const data = formatData ? formatData(values) : values;
       const response: R = await saveFunction(data);
       setSubmitting(false);
