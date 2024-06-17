@@ -149,51 +149,6 @@ const ManageCemeteries = () => {
 
   const columns = [
     {
-      expander: true,
-      style: { width: '3em' },
-      disabled: true,
-      iconClassName: 'pi pi-search',
-      // rowToggler: { className: 'opacity-40 pointer-events-none' },
-      body: (data: CemeteryInterface, options: ColumnBodyOptions) => {
-        const {
-          expander,
-          props: { expandedRows },
-        } = options;
-        const { id, address } = data;
-
-        console.log('expandedRows >> ', expandedRows);
-
-        const isExpanded =
-          expandedRows?.some((row: CemeteryInterface) => row.id === id) ||
-          false;
-
-        console.log('isExpanded: ', isExpanded);
-
-        const baseClass = 'pi pi-chevron-left';
-        const className = isExpanded
-          ? `${baseClass} pi-chevron-down`
-          : baseClass;
-
-        const handleClick = (e: React.MouseEvent<HTMLElement>) =>
-          expander.onClick(e);
-
-        const tooltip = !address ? t('No address') : '';
-        return (
-          <Button
-            icon={className}
-            rounded
-            text
-            severity='secondary'
-            aria-label='Toggle'
-            tooltip={tooltip}
-            className={!address ? 'opacity-20' : ''}
-            tooltipOptions={{ position: 'bottom', mouseTrack: true }}
-            onClick={address ? handleClick : undefined}
-          />
-        );
-      },
-    },
-    {
       body: (data: CemeteryInterface) => (
         <RowActions
           data={data}
@@ -223,6 +178,7 @@ const ManageCemeteries = () => {
         <DataTableWrapper
           data={cemeteries}
           loading={cemeteriesLoadable.state === 'loading'}
+          withExpand={true}
           columns={columns}
           filters={filters}
           fieldsToFilter={fieldsToFilter}

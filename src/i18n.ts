@@ -14,8 +14,7 @@ i18n
       he: {
         translation: {
           'Address information': 'כתובת',
-          'Line 1': 'שורה 1',
-          'Line 2': 'שורה 2',
+          'Line 1 is required': 'שורה 1 זה שדה חובה',
           City: 'עיר',
           Country: 'מדינה',
           'Postal code': 'מיקוד',
@@ -65,6 +64,8 @@ i18n
           Password: 'סיסמה',
           Save: 'שמור',
           Search: 'חיפוש',
+          // validations
+          "can't be blank": 'שדה חובה',
         },
       },
     },

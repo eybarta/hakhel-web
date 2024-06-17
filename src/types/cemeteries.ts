@@ -9,3 +9,7 @@ export interface CemeteryInterface {
   address_attributes?: AddressInterface;
   address?: AddressInterface;
 }
+
+export type CemeteryServerInterface = {
+  cemetery: CemeteryInterface;
+};

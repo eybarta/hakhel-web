@@ -22,6 +22,7 @@ const FormError: React.FC<FormErrorProps> = ({ errors, isSubmitting }) => {
     hasSubmitted &&
     hasErrors && (
       <div className='p-error pt-1.5'>
+        {/* {JSON.stringify(errors)} */}
         {t('Please correct the errors in the form')}
       </div>
     )

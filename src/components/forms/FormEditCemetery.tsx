@@ -9,10 +9,16 @@ import AddressFields from '@components/fields/AddressFields';
 import useHasErrors from '@utils/useHasErrors';
 import { addressFields } from '@constants/addressFields';
 import { cemeteryFields } from '@constants/cemeteryFields';
-import { defaultCemeteryValues } from '@constants/defaultValues';
+import {
+  defaultAddressValues,
+  defaultCemeteryValues,
+} from '@constants/defaultValues';
 import useCemeteryValidation from '@validations/useCemeteryValidation';
 import InputTextField from '@components/fields/InputTextField';
 import FormError from './FormError';
+import useSubmitForm from '@utils/useSubmitForm';
+import useFormatCemetery from '@services/formatters/useFormatCemetery';
+import DialogHeader from '@components/DialogHeader';
 interface FormEditCemeteryProps {
   closeDialog: () => void;
   submit: (response: CemeteryInterface) => void;
@@ -27,56 +33,53 @@ const FormEditCemetery = ({
   const { t } = useTranslation();
   // Form validation schema
   const validationSchema = useCemeteryValidation();
+  const hasErrors = useHasErrors();
 
   const initialValues = propValues || defaultCemeteryValues;
-  const hasErrors = useHasErrors();
-  const submitHandler = async (
-    values: CemeteryInterface,
-    { setSubmitting }: FormikHelpers<CemeteryInterface>
-  ) => {
-    setSubmitting(false);
-    const data = { cemetery: values };
-    const response = await saveCemetery(data);
-    submit(response);
-    closeDialog();
-  };
-  const renderCardTitle = () => {
-    return (
-      <div className='flex items-center justify-between'>
-        <span>
-          {`${initialValues.id ? t('Edit') : t('Add')} ` + t('cemetery')}
-        </span>
-        <Button
-          icon='pi pi-times'
-          rounded
-          text
-          severity='secondary'
-          aria-label='Cancel'
-          onClick={closeDialog}
-        />
-      </div>
-    );
+  const isEdit = !!initialValues.id;
+
+  const { address, ...restData } = initialValues;
+  const transformedInitialValues = {
+    ...restData,
+    address_attributes: address || defaultAddressValues,
   };
 
+  const submitHandler = useSubmitForm({
+    formatData: useFormatCemetery,
+    saveFunction: saveCemetery,
+    submit,
+    callback: closeDialog,
+  });
+
+  const dialogTitle =
+    `${initialValues.id ? t('Edit') : t('Add')} ` + t('cemetery');
   return (
     <div className='flex justify-center items-center'>
       <Card
         pt={{ title: { className: 'text-base' } }}
-        title={renderCardTitle}
+        title={() => (
+          <DialogHeader
+            title={dialogTitle}
+            closeDialog={closeDialog}
+          ></DialogHeader>
+        )}
         className='w-full max-w-3xl min-w-[580px]'
       >
         <Formik
-          initialValues={initialValues}
+          initialValues={transformedInitialValues}
           validationSchema={validationSchema}
-          onSubmit={submitHandler}
+          onSubmit={async (values, { setSubmitting }) => {
+            await submitHandler(values);
+            setSubmitting(false);
+          }}
         >
           {({ handleSubmit, errors, touched, setTouched, isSubmitting }) => (
             <Form
-              onSubmit={async e => {
-                e.preventDefault();
-                setTouched({}, true);
-                handleSubmit(e);
-              }}
+            // onSubmit={async e => {
+            //   e.preventDefault();
+            //   setTouched({}, true);
+            //   handleSubmit(e);
+            // }}
             >
               <TabView>
                 <TabPanel

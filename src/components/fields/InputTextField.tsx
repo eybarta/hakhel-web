@@ -17,15 +17,17 @@ const InputTextField: React.FC<InputTextFieldProps> = ({ label, name }) => {
           {label && (
             <label className='block mb-1 font-semibold' htmlFor={name}>
               {t(label)}
+              {/* {field && <div>FIELD: {JSON.stringify(field)}</div>}
+              {form && <div>FORM: {JSON.stringify(form)}</div>}
+              {meta && <div>META: {JSON.stringify(meta)}</div>} */}
             </label>
           )}
           <InputText
             id={name}
             className={meta.touched && meta.error ? 'p-invalid' : ''}
             {...field}
+            value={field.value || ''} // Ensure the value is never null or undefined
             onChange={e => {
-              console.log('form: ', form);
-              console.log('e.target.value: ', e.target.value);
               form.setFieldValue(field.name, e.target.value);
               form.setFieldTouched(field.name, true, false);
             }}

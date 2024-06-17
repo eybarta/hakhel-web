@@ -89,16 +89,13 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
 
   const onChangeHandler = (
     date: Date,
-    setFieldValue: FormikHelpers<any>['setFieldValue'],
-    setFieldTouched: FormikHelpers<any>['setFieldTouched']
+    setFieldValue: FormikHelpers<any>['setFieldValue']
   ) => {
-    console.log('date: ', date);
-    const formattedDate = formatDate(date);
     setSelectedRawDate(date);
-    setFieldTouched(name, true, false);
+    const formattedDate = formatDate(date);
     setFieldValue(name, formattedDate);
-    if (selectedRawDate) {
-      const hebrewDateParts = fetchHebrewDateParts(selectedRawDate);
+    if (date) {
+      const hebrewDateParts = fetchHebrewDateParts(date);
       if (hebrewDateParts) {
         parseAndsetHebrewDates(hebrewDateParts, setFieldValue);
       }
@@ -168,13 +165,9 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
           <Calendar
             inputId='hebrewDate'
             value={selectedRawDate ? new Date(selectedRawDate) : null}
-            onChange={e =>
-              onChangeHandler(
-                e.value as Date,
-                form.setFieldValue,
-                form.setFieldTouched
-              )
-            }
+            onChange={e => {
+              onChangeHandler(e.value as Date, form.setFieldValue);
+            }}
             viewDate={monthViewDate}
             onViewDateChange={monthViewChanged}
             dateTemplate={dateTemplate}
@@ -186,11 +179,13 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
             formatDateTime={formatHebDate}
           />
           {validationProp ? (
-            <ErrorMessage
-              name={validationProp}
-              component='div'
-              className='p-error loading-none'
-            />
+            <div>
+              <ErrorMessage
+                name={validationProp}
+                component='div'
+                className='p-error loading-none'
+              />
+            </div>
           ) : null}
         </div>
       )}

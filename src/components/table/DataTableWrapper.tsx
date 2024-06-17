@@ -4,10 +4,12 @@ import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { Column, ColumnProps } from 'primereact/column';
 import type { FilterMatchMode } from 'primereact/api';
 import { useTranslation } from 'react-i18next';
+import useExpanderColumn from './hooks/useExpanderColumn';
 
 interface DataTableWrapperProps<T> {
   data: T[];
   loading: boolean;
+  withExpand?: boolean;
   columns: ColumnProps[];
   fieldsToFilter: string[];
   filters: { [key: string]: { value: string; matchMode: FilterMatchMode } };
@@ -30,6 +32,7 @@ interface DataTableWrapperProps<T> {
 const DataTableWrapper = <T extends object>({
   data,
   loading,
+  withExpand = false,
   columns,
   filters,
   fieldsToFilter,
@@ -41,6 +44,7 @@ const DataTableWrapper = <T extends object>({
   const [expandedRows, setExpandedRows] = useState<
     DataTableExpandedRows | undefined
   >(undefined);
+  const expanderColumn = useExpanderColumn();
 
   return (
     <DataTable
@@ -66,6 +70,7 @@ const DataTableWrapper = <T extends object>({
         setExpandedRows(e.data as DataTableExpandedRows);
       }}
     >
+      {withExpand && <Column {...expanderColumn} />}
       {columns.map((col, index) => (
         <Column key={index} {...col} />
       ))}

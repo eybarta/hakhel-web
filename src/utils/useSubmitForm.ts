@@ -36,6 +36,7 @@ const useSubmitForm = <T, R>({
         callback();
       }
     } catch (error) {
+      console.error('error: ', error);
       setSubmitting(false);
       // handle error
     }

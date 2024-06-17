@@ -46,41 +46,23 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
     callback: closeDialog,
   });
 
-  // const submitHandler = async (
-  //   values: DeceasedPersonInterface,
-  //   {
-  //     setSubmitting,
-  //   }: {
-  //     setSubmitting: FormikHelpers<any>['setSubmitting'];
-  //   }
-  // ) => {
-  //   const data = { deceased_person: values };
-  //   const response: DeceasedPersonInterface = await saveDeceasedPerson(data);
-  //   setSubmitting(false);
-  //   submit(response);
-  //   closeDialog();
-  // };
-
-  const renderCardTitle = () => {
-    return (
-      <DialogHeader
-        title={
-          `${initialValues.id ? t('Edit') : t('Add')} ` + t('deceased person')
-        }
-        closeDialog={closeDialog}
-      ></DialogHeader>
-    );
-  };
-
   const getInitialDateValue = (date: string | null) =>
     date ? new Date(date) : null;
 
   const hasErrors = useHasErrors();
+
+  const dialogTitle =
+    `${initialValues.id ? t('Edit') : t('Add')} ` + t('deceased person');
   return (
     <div className='flex justify-center items-center'>
       <Card
         pt={{ title: { className: 'text-base' } }}
-        title={renderCardTitle}
+        title={() => (
+          <DialogHeader
+            title={dialogTitle}
+            closeDialog={closeDialog}
+          ></DialogHeader>
+        )}
         className='w-full max-w-3xl min-w-[580px]'
       >
         <Formik
@@ -99,7 +81,6 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
           }) => (
             <Form
               onSubmit={async e => {
-                console.log('onSubmit: <<< ');
                 e.preventDefault();
                 setTouched({}, true);
                 handleSubmit(e);
@@ -116,6 +97,12 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                     },
                   }}
                 >
+                  {/* <div className='break-words ltr text-left'>
+                    {JSON.stringify(errors)}
+                  </div>
+                  <div className='break-words ltr text-left'>
+                    {JSON.stringify(values)}
+                  </div> */}
                   <div className='flex flex-col gap-2.5'>
                     <div className='flex items-start justify-between gap-5'>
                       <InputTextField
