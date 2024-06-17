@@ -28,10 +28,6 @@ export async function fetchCemetery(id: number, withAddress: boolean = false) {
 }
 
 const parseCemeteryData = (data: CemeteryInterface) => {
-  console.log(
-    'parseCemeteryData >> data.address_attributes: ',
-    data.address_attributes
-  );
   if (data.address_attributes) {
     const hasAddressData = Object.values(data.address_attributes).some(
       value => value
