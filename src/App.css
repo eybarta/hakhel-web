@@ -1,7 +1,11 @@
 #root {
-  margin: 0 auto;
+	@apply my-0 mx-auto;
 }
 
 .p-progress-spinner-circle {
-	stroke: #000000;
+	@apply stroke-black;
+}
+
+.p-progress-spinner.inline-spinner {
+	@apply h-6 w-6;
 }

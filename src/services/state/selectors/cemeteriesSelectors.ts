@@ -1,6 +1,8 @@
 import { selector, selectorFamily } from 'recoil';
 import { fetchCemeteries, deleteCemetery } from '@api/cemeteries';
 import { cemeteriesAtom } from '@services/state/atoms/cemeteriesAtoms';
+import { Options } from '@type/options';
+import { CemeteryInterface } from '@type/cemeteries';
 
 export const cemeteriesDataSelector = selector({
   key: 'cemeteriesDataSelector',
@@ -14,6 +16,23 @@ export const cemeteriesDataSelector = selector({
   },
   set: ({ set }, newCemetery) => {
     set(cemeteriesAtom, newCemetery);
+  },
+});
+
+export const cemeteryOptionsSelector = selector<Options>({
+  key: 'cemeteryOptionsSelector',
+  get: ({ get }) => {
+    try {
+      const cemeteries: CemeteryInterface[] = get(cemeteriesAtom);
+      console.log('>>> cemeteries: ', cemeteries);
+      return cemeteries.map(cemetery => ({
+        label: cemetery.name,
+        value: cemetery.id || '',
+      }));
+    } catch (error) {
+      console.error('error: ', error);
+      throw error;
+    }
   },
 });
 

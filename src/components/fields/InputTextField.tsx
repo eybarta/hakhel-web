@@ -1,37 +1,31 @@
 import React from 'react';
-import { Field, FieldProps, FieldHookConfig } from 'formik';
-import { InputText, InputTextProps } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
+import { Field, FieldProps } from 'formik';
+import { InputText } from 'primereact/inputtext';
 import { useTranslation } from 'react-i18next';
 
-interface InputFieldProps extends InputTextProps {
+interface InputTextFieldProps {
   label?: string;
+  name: string;
 }
 
-const InputField: React.FC<InputFieldProps & FieldHookConfig<string>> = ({
-  label,
-  ...props
-}) => {
+const InputTextField: React.FC<InputTextFieldProps> = ({ label, name }) => {
   const { t } = useTranslation();
   return (
-    <Field name={props.name}>
+    <Field name={name}>
       {({ field, form, meta }: FieldProps<string>) => (
         <div className='flex-1'>
           {label && (
-            <label
-              className='block mb-1 font-semibold'
-              htmlFor={props.id || props.name}
-            >
+            <label className='block mb-1 font-semibold' htmlFor={name}>
               {t(label)}
             </label>
           )}
           <InputText
-            id={props.id || props.name}
-            className={classNames(props.className, {
-              'p-invalid': meta.touched && meta.error,
-            })}
-            value={props.value || ''}
+            id={name}
+            className={meta.touched && meta.error ? 'p-invalid' : ''}
+            {...field}
             onChange={e => {
+              console.log('form: ', form);
+              console.log('e.target.value: ', e.target.value);
               form.setFieldValue(field.name, e.target.value);
               form.setFieldTouched(field.name, true, false);
             }}
@@ -46,4 +40,4 @@ const InputField: React.FC<InputFieldProps & FieldHookConfig<string>> = ({
   );
 };
 
-export default InputField;
+export default InputTextField;

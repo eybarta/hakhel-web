@@ -32,6 +32,10 @@ import ManageCemeteriesTableHeader from '@components/table/templates/ManageCemet
 
 // Types
 import type { CemeteryInterface } from '@type/cemeteries';
+import { ColumnBodyOptions, ColumnPassThroughType } from 'primereact/column';
+import { PassThroughType } from 'primereact/utils';
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
 
 const ManageCemeteries = () => {
   const { t } = useTranslation();
@@ -126,7 +130,69 @@ const ManageCemeteries = () => {
       />
     );
   };
+
+  const rowExpansionTemplate = (data: CemeteryInterface) => {
+    console.log('data.address: ', data.address);
+    const {
+      address: { line1, city, postal_code },
+    } = data;
+    return (
+      <div className='p-3'>
+        <h5 className='font-semibold mb-2'>{t('Cemetery address')}</h5>
+        <p>{line1}</p>
+        <p>
+          {city}, {postal_code}
+        </p>
+      </div>
+    );
+  };
+
   const columns = [
+    {
+      expander: true,
+      style: { width: '3em' },
+      disabled: true,
+      iconClassName: 'pi pi-search',
+      // rowToggler: { className: 'opacity-40 pointer-events-none' },
+      body: (data: CemeteryInterface, options: ColumnBodyOptions) => {
+        const {
+          expander,
+          props: { expandedRows },
+        } = options;
+        const { id, address } = data;
+
+        console.log('expandedRows >> ', expandedRows);
+
+        const isExpanded =
+          expandedRows?.some((row: CemeteryInterface) => row.id === id) ||
+          false;
+
+        console.log('isExpanded: ', isExpanded);
+
+        const baseClass = 'pi pi-chevron-left';
+        const className = isExpanded
+          ? `${baseClass} pi-chevron-down`
+          : baseClass;
+
+        const handleClick = (e: React.MouseEvent<HTMLElement>) =>
+          expander.onClick(e);
+
+        const tooltip = !address ? t('No address') : '';
+        return (
+          <Button
+            icon={className}
+            rounded
+            text
+            severity='secondary'
+            aria-label='Toggle'
+            tooltip={tooltip}
+            className={!address ? 'opacity-20' : ''}
+            tooltipOptions={{ position: 'bottom', mouseTrack: true }}
+            onClick={address ? handleClick : undefined}
+          />
+        );
+      },
+    },
     {
       body: (data: CemeteryInterface) => (
         <RowActions
@@ -146,6 +212,8 @@ const ManageCemeteries = () => {
       field: 'description',
       header: t('Description'),
     },
+
+    // <Column expander={allowExpansion} style={{ width: '5rem' }} />
   ];
   const fieldsToFilter = ['name', 'description'];
 
@@ -159,6 +227,7 @@ const ManageCemeteries = () => {
           filters={filters}
           fieldsToFilter={fieldsToFilter}
           headerTemplate={tableHeaderTemplate()}
+          rowExpansionTemplate={rowExpansionTemplate}
         />
       </Card>
     </div>

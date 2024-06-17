@@ -1,45 +1,34 @@
 import React from 'react';
-import { get } from 'lodash';
-
-import { Field, ErrorMessage, FieldInputProps, FormikProps } from 'formik';
-import { InputText } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
-import { useTranslation } from 'react-i18next';
-import InputField from './InputField';
+import { FormikProps } from 'formik';
+import InputTextField from './InputTextField';
 import { AddressInterface } from '@type/addressInterface';
+// import { defaultAddressValues } from '@constants/defaultValues';
 
 interface AddressFieldsProps {
   prefix: string; // Use prefix to handle nested object keys
   errors: FormikProps<any>['errors'];
-  value: AddressInterface;
+  value?: AddressInterface;
   touched: FormikProps<any>['touched'];
 }
 
 const AddressFields: React.FC<AddressFieldsProps> = ({
   prefix,
-  errors,
-  touched,
+  // value = defaultAddressValues,
 }) => {
-  const { t } = useTranslation();
-
-  const isFieldInvalid = (
-    field: FieldInputProps<string>,
-    errors: FormikProps<any>['errors'],
-    touched: FormikProps<any>['touched']
-  ): boolean => {
-    return !!(get(touched, field.name) && get(errors, field.name));
-  };
-
+  // const { line1, line2, city, country, postal_code } = value;
   return (
     <div className='flex flex-col gap-2.5'>
-      <InputField name={`${prefix}.line1`} label='Line 1'></InputField>
-      <InputField name={`${prefix}.line2`} label='Line 2'></InputField>
-      <InputField name={`${prefix}.city`} label='City'></InputField>
-      <InputField name={`${prefix}.country`} label='Country'></InputField>
-      <InputField
+      <InputTextField name={`${prefix}.line1`} label='Line 1'></InputTextField>
+      <InputTextField name={`${prefix}.line2`} label='Line 2'></InputTextField>
+      <InputTextField name={`${prefix}.city`} label='City'></InputTextField>
+      <InputTextField
+        name={`${prefix}.country`}
+        label='Country'
+      ></InputTextField>
+      <InputTextField
         name={`${prefix}.postal_code`}
         label='Postal code'
-      ></InputField>
+      ></InputTextField>
     </div>
   );
 };

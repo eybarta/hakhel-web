@@ -1,46 +1,44 @@
 import React from 'react';
 import { Field, FieldProps, FieldHookConfig } from 'formik';
-import { InputTextProps } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
 import { useTranslation } from 'react-i18next';
 import { Options } from '@type/options';
 import { Dropdown } from 'primereact/dropdown';
 
-interface SelectFieldProps extends InputTextProps {
+interface SelectFieldProps {
   label?: string;
+  name?: string;
+  value?: string | number | undefined;
   options: Options;
 }
 
-const SelectField: React.FC<SelectFieldProps & FieldHookConfig<string>> = ({
+const SelectField: React.FC<SelectFieldProps> = ({
   label,
+  name,
+  value,
   options,
-  ...props
+  // ...props
 }) => {
   const { t } = useTranslation();
+
   return (
-    <Field name={props.name}>
+    <Field name={name}>
       {({ field, form, meta }: FieldProps<string>) => (
         <div className='flex-1'>
           {label && (
-            <label
-              className='block mb-1 font-semibold'
-              htmlFor={props.id || props.name}
-            >
+            <label className='block mb-1 font-semibold' htmlFor={name}>
               {t(label)}
             </label>
           )}
           <Dropdown
             pt={{ root: { className: 'w-full' } }}
             appendTo={'self'}
-            inputId='gender'
-            {...field}
+            inputId={name}
             options={options}
-            placeholder={t('Select gender')}
-            className={classNames(props.className, {
-              'p-invalid': meta.touched && meta.error,
-            })}
+            {...field}
+            placeholder={t(label || 'Select')}
+            className={meta.touched && meta.error ? 'p-invalid' : ''}
             onChange={e => {
-              form.setFieldValue(field.name, e.value);
+              form.setFieldValue(field.name, e.value ?? '');
             }}
             onBlur={() => {
               form.setFieldTouched(field.name, true);

@@ -3,5 +3,5 @@ export interface AddressInterface {
   line2: string;
   city: string;
   country: string;
-  postal_code: number;
+  postal_code: string | number;
 }

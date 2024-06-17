@@ -7,7 +7,7 @@ type CemeteryServerInterface = {
 
 export async function fetchCemeteries() {
   try {
-    const response = await api.get('cemeteries'); // Adjust the endpoint as needed
+    const response = await api.get('cemeteries?include_all'); // Adjust the endpoint as needed
     console.log('response: ', response);
     return response.data;
   } catch (error) {

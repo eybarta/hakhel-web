@@ -20,3 +20,7 @@ export interface DeceasedPersonInterface {
   last_name: string;
   mother_first_name: string;
 }
+
+export type DeceasedPersonServerInterface = {
+  deceased_person: DeceasedPersonInterface;
+};

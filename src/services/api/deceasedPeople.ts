@@ -1,4 +1,7 @@
-import { DeceasedPersonInterface } from '@type/deceased.ts';
+import {
+  DeceasedPersonInterface,
+  DeceasedPersonServerInterface,
+} from '@type/deceased.ts';
 import api from '@api/apiService.ts';
 
 export async function fetchDeceasedPeople() {
@@ -11,11 +14,9 @@ export async function fetchDeceasedPeople() {
   }
 }
 
-type DeceasedPersonServerInterface = {
-  deceased_person: DeceasedPersonInterface;
-};
-
-export async function saveDeceasedPerson(data: DeceasedPersonServerInterface) {
+export async function saveDeceasedPerson(
+  data: DeceasedPersonServerInterface
+): Promise<DeceasedPersonInterface> {
   const {
     deceased_person: { id },
   } = data;

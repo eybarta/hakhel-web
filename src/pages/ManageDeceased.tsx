@@ -182,7 +182,17 @@ const ManageDeceased = () => {
     {
       body: (data: DeceasedPersonInterface) => {
         const cemetery = findCemetery(data.cemetery_id);
-        return cemetery ? <span>{cemetery.name}</span> : <ProgressSpinner />;
+        if (!data.cemetery_id) {
+          return <span>-</span>;
+        }
+        return cemetery ? (
+          <span>{cemetery.name}</span>
+        ) : (
+          <ProgressSpinner
+            className='inline-spinner'
+            aria-label='Loading cemetery'
+          />
+        );
       },
       header: t('Cemetery'),
     },

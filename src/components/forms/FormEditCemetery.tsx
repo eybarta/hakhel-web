@@ -11,7 +11,7 @@ import { addressFields } from '@constants/addressFields';
 import { cemeteryFields } from '@constants/cemeteryFields';
 import { defaultCemeteryValues } from '@constants/defaultValues';
 import useCemeteryValidation from '@validations/useCemeteryValidation';
-import InputField from '@components/fields/InputField';
+import InputTextField from '@components/fields/InputTextField';
 import FormError from './FormError';
 interface FormEditCemeteryProps {
   closeDialog: () => void;
@@ -90,16 +90,11 @@ const FormEditCemetery = ({
                   }}
                 >
                   <div className='flex flex-col gap-2.5'>
-                    <InputField
-                      value={initialValues.name}
-                      name='name'
-                      label='Name'
-                    ></InputField>
-                    <InputField
+                    <InputTextField name='name' label='Name'></InputTextField>
+                    <InputTextField
                       name='description'
                       label='Description'
-                      value={initialValues.description}
-                    ></InputField>
+                    ></InputTextField>
                   </div>
                 </TabPanel>
                 <TabPanel
@@ -122,7 +117,10 @@ const FormEditCemetery = ({
               </TabView>
 
               <div className='px-5'>
-                <FormError errors={errors}></FormError>
+                <FormError
+                  errors={errors}
+                  isSubmitting={isSubmitting}
+                ></FormError>
                 <Button
                   type='submit'
                   label={t('Save')}
