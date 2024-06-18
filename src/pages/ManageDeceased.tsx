@@ -154,7 +154,7 @@ const ManageDeceased = () => {
     const { relations } = data;
     return relations?.length ? (
       <div className='flex gap-3 items-start w-full'>
-        <h4>{t('Contacts of the deceased')}</h4>
+        <h4>{t('contacts of the deceased')}</h4>
         {relations.map(relation => {
           const { contact_person } = relation;
           return (
@@ -191,12 +191,12 @@ const ManageDeceased = () => {
     {
       sortable: true,
       field: 'first_name',
-      header: t('First name'),
+      header: t('first name'),
     },
     {
       sortable: true,
       field: 'last_name',
-      header: t('Last name'),
+      header: t('last name'),
     },
     {
       body: (data: DeceasedPersonInterface) => {
@@ -209,7 +209,7 @@ const ManageDeceased = () => {
           <span>{`${hebrew_day_of_death} ${hebrew_month_of_death} ${hebrew_year_of_death}`}</span>
         );
       },
-      header: t('Date of Death'),
+      header: t('date of death'),
     },
     {
       body: (data: DeceasedPersonInterface) => {
@@ -226,7 +226,7 @@ const ManageDeceased = () => {
           />
         );
       },
-      header: t('Cemetery'),
+      header: t('cemetery'),
     },
   ];
 

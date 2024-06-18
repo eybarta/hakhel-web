@@ -140,7 +140,7 @@ const ManageCemeteries = () => {
     } = data;
     return (
       <div className='p-3'>
-        <h5 className='font-semibold mb-2'>{t('Cemetery address')}</h5>
+        <h5 className='font-semibold mb-2'>{t('cemetery address')}</h5>
         <p>{line1}</p>
         <p>
           {city}, {postal_code}
@@ -162,12 +162,12 @@ const ManageCemeteries = () => {
     {
       sortable: true,
       field: 'name',
-      header: t('Name'),
+      header: t('name'),
     },
     {
       sortable: true,
       field: 'description',
-      header: t('Description'),
+      header: t('description'),
     },
 
     // <Column expander={allowExpansion} style={{ width: '5rem' }} />

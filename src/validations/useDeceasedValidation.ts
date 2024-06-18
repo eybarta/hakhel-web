@@ -5,11 +5,11 @@ const useDeceasedValidation = () => {
   const { t } = useTranslation();
 
   return Yup.object({
-    first_name: Yup.string().required(t('First name is required')),
-    last_name: Yup.string().required(t('Last name is required')),
-    gender: Yup.string().required(t('Gender is required')),
-    cemetery_id: Yup.string().required(t('Cemetery is required')),
-    date_of_death: Yup.string().required(t('Hebrew date of death is required')),
+    first_name: Yup.string().required(t('first name is required')),
+    last_name: Yup.string().required(t('last name is required')),
+    gender: Yup.string().required(t('gender is required')),
+    cemetery_id: Yup.string().required(t('cemetery is required')),
+    date_of_death: Yup.string().required(t('hebrew date of death is required')),
   });
 };
 

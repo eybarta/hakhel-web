@@ -14,14 +14,14 @@ const ManageCemeteriesTableHeader: React.FC<
   const { t } = useTranslation();
 
   return (
-    <TableHeader title={t('Cemeteries')} onSearch={onSearch}>
+    <TableHeader title={t('cemeteries')} onSearch={onSearch}>
       <Button
         icon='pi pi-plus'
         severity='info'
         raised
         outlined
         size='small'
-        label={t('Add cemetery')}
+        label={t('add cemetery')}
         className='mr-2'
         onClick={onAdd}
       />

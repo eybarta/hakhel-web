@@ -52,7 +52,7 @@ const FormEditCemetery = ({
   });
 
   const dialogTitle =
-    `${initialValues.id ? t('Edit') : t('Add')} ` + t('cemetery');
+    `${initialValues.id ? t('edit') : t('add')} ` + t('cemetery');
   return (
     <div className='flex justify-center items-center'>
       <Card
@@ -80,7 +80,7 @@ const FormEditCemetery = ({
             >
               <TabView>
                 <TabPanel
-                  header={t('Cemetery information')}
+                  header={t('cemetery information')}
                   pt={{
                     headerAction: {
                       className: hasErrors(errors, touched, cemeteryFields)
@@ -99,7 +99,7 @@ const FormEditCemetery = ({
                 </TabPanel>
                 <TabPanel
                   contentClassName='max-h-96 overflow-auto'
-                  header={t('Address')}
+                  header={t('address')}
                   pt={{
                     headerAction: {
                       className: hasErrors(errors, touched, addressFields)
@@ -123,7 +123,7 @@ const FormEditCemetery = ({
                 ></FormError>
                 <Button
                   type='submit'
-                  label={t('Save')}
+                  label={t('save')}
                   className='w-full mt-5'
                   severity='info'
                   loading={isSubmitting}

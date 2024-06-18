@@ -17,7 +17,7 @@ const useCemeteryValidation = () => {
   };
 
   return Yup.object({
-    name: Yup.string().required(t('Name is required')),
+    name: Yup.string().required(t('name is required')),
     description: Yup.string(),
     address_attributes: Yup.object({
       line1: addressFieldValidation('Line 1 is required'),

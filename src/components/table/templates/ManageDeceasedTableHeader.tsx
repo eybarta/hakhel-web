@@ -15,14 +15,14 @@ const ManageDeceasedTableHeader: React.FC<ManageDeceasedTableHeaderProps> = ({
   const { t } = useTranslation();
 
   return (
-    <TableHeader title={t('Deceased people')} onSearch={onSearch}>
+    <TableHeader title={t('deceased people')} onSearch={onSearch}>
       <Button
         icon='pi pi-plus'
         severity='info'
         raised
         outlined
         size='small'
-        label={t('Add deceased person')}
+        label={t('add deceased person')}
         className='mr-2'
         onClick={onAdd}
       />

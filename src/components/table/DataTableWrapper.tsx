@@ -41,7 +41,7 @@ const DataTableWrapper = <T extends object>({
       value={data}
       header={headerTemplate}
       loading={loading}
-      emptyMessage={emptyMessage || t('No data available')}
+      emptyMessage={emptyMessage || t('no data available')}
       globalFilterFields={fieldsToFilter || []}
       filters={filters}
       stripedRows

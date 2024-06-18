@@ -52,7 +52,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
   const hasErrors = useHasErrors();
 
   const dialogTitle =
-    `${initialValues.id ? t('Edit') : t('Add')} ` + t('deceased person');
+    `${initialValues.id ? t('edit') : t('add')} ` + t('deceased person');
   return (
     <div className='flex justify-center items-center'>
       <Card
@@ -87,7 +87,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
             >
               <TabView>
                 <TabPanel
-                  header={t('Deceased information')}
+                  header={t('deceased information')}
                   pt={{
                     headerAction: {
                       className: hasErrors(errors, touched, deceasedFields)
@@ -130,7 +130,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                   </div>
                 </TabPanel>
                 <TabPanel
-                  header={t('Cemetery information')}
+                  header={t('cemetery information')}
                   pt={{
                     headerAction: {
                       className: hasErrors(errors, touched, burialFields)
@@ -163,7 +163,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                 <FormError errors={errors} isSubmitting={isSubmitting} />
                 <Button
                   type='submit'
-                  label={t('Save')}
+                  label={t('save')}
                   className='w-full mt-5'
                   severity='info'
                   loading={isSubmitting}
