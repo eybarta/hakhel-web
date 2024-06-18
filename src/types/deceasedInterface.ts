@@ -1,4 +1,7 @@
-import { RelationshipToContactInterface } from './relationshipsInterface';
+import {
+  RelationToContactClientInterface,
+  RelationToContactServerInterface,
+} from './relationshipsInterface';
 
 export interface DeceasedPersonInterface {
   id?: null | number;
@@ -21,7 +24,8 @@ export interface DeceasedPersonInterface {
   hebrew_year_of_death: string;
   last_name: string;
   mother_first_name: string;
-  relations_attributes?: RelationshipToContactInterface[];
+  relations_attributes?: RelationToContactClientInterface[];
+  relations?: RelationToContactServerInterface[];
 }
 
 export type DeceasedPersonServerInterface = {

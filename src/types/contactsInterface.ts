@@ -1,5 +1,8 @@
 import { AddressInterface } from './addressInterface';
-import { RelationshipToDeceasedInterface } from './relationshipsInterface';
+import {
+  RelationToDeceasedClientInterface,
+  RelationToDeceasedServerInterface,
+} from './relationshipsInterface';
 
 export interface ContactInterface {
   id?: number | null;
@@ -12,9 +15,10 @@ export interface ContactInterface {
   updated_at?: Date;
   address_attributes?: AddressInterface;
   address?: AddressInterface;
-  relations_attributes?: RelationshipToDeceasedInterface[];
+  relations_attributes?: RelationToDeceasedClientInterface[];
+  relations?: RelationToDeceasedServerInterface[];
 }
 
-export type ContactsServerInterface = {
+export type ContactServerInterface = {
   contact_person: ContactInterface;
 };

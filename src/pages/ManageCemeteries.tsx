@@ -180,11 +180,12 @@ const ManageCemeteries = () => {
         <DataTableWrapper
           data={cemeteries}
           loading={cemeteriesLoadable.state === 'loading'}
-          withExpand={true}
           columns={columns}
           filters={filters}
           fieldsToFilter={fieldsToFilter}
           headerTemplate={tableHeaderTemplate()}
+          withExpand={true}
+          expanderProp='address'
           rowExpansionTemplate={rowExpansionTemplate}
         />
       </Card>

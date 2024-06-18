@@ -23,7 +23,7 @@ import {
   deceasedDataSelector,
   deleteDeceasedSelector,
   cemeteriesDataSelector,
-  deceasedPeopleAtom,
+  deceasedAtom,
   cemeteriesAtom,
 } from '@services/state';
 
@@ -46,8 +46,7 @@ const ManageDeceased = () => {
   const { showToast } = useToast();
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
-  const [deceasedPeople, setDeceasedPeople] =
-    useRecoilState(deceasedPeopleAtom);
+  const [deceasedPeople, setDeceasedPeople] = useRecoilState(deceasedAtom);
 
   const [cemeteries, setCemeteries] = useRecoilState(cemeteriesAtom);
   const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
@@ -146,6 +145,39 @@ const ManageDeceased = () => {
   // util
   const findCemetery = useFindCemetery(cemeteries);
 
+  const contactCardFooter = contact => {
+    console.log('contact: ', contact);
+    return <div>CARD FOOTER</div>;
+  };
+  const rowExpansionTemplate = (data: DeceasedPersonInterface) => {
+    console.log('data.relations: ', data.relations);
+    const { relations } = data;
+    return relations?.length ? (
+      <div className='flex gap-3 items-start w-full'>
+        <h4>{t('Contacts of the deceased')}</h4>
+        {relations.map(relation => {
+          const { contact_person } = relation;
+          return (
+            <Card
+              key={relation.id}
+              title={`${contact_person.first_name} ${contact_person.last_name}`}
+              subTitle={t(relation.relation_of_deceased_to_contact)}
+              footer={contactCardFooter}
+              className='md:w-25rem'
+            >
+              <p className='m-0'>{JSON.stringify(relation)}</p>
+            </Card>
+            // <div className='max-w-96 break-words flex flex-col flex-1 rounded-md border border-blue-400'>
+            //   {JSON.stringify(relation)}
+            // </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div className='p-3'>NO RELATIONS YET!</div>
+    );
+  };
+
   const columns = [
     {
       body: (data: DeceasedPersonInterface) => (
@@ -209,6 +241,9 @@ const ManageDeceased = () => {
           filters={filters}
           fieldsToFilter={fieldsToFilter}
           headerTemplate={tableHeaderTemplate()}
+          withExpand={true}
+          expanderProp='relations'
+          rowExpansionTemplate={rowExpansionTemplate}
         />
       </Card>
     </div>

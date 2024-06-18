@@ -1,19 +1,19 @@
 import { selector, selectorFamily } from 'recoil';
-import { fetchDeceasedPeople, deleteDeceasedPerson } from '@api/deceasedPeople';
-import { deceasedPeopleAtom } from '@services/state/atoms/deceasedAtoms';
+import { fetchAllDeceased, deleteDeceased } from '@services/api/deceasedApi';
+import { deceasedAtom } from '@services/state/atoms/deceasedAtoms';
 
 export const deceasedDataSelector = selector({
   key: 'deceasedDataSelector',
   get: async () => {
     try {
-      return await fetchDeceasedPeople();
+      return await fetchAllDeceased();
     } catch (error) {
       console.error('error: ', error);
       throw error;
     }
   },
   set: ({ set }, newDeceasedPeople) => {
-    set(deceasedPeopleAtom, newDeceasedPeople);
+    set(deceasedAtom, newDeceasedPeople);
   },
 });
 
@@ -21,7 +21,7 @@ export const deleteDeceasedSelector = selectorFamily<void, number>({
   key: 'deleteDeceasedSelector',
   get: (id: number) => async () => {
     try {
-      return await deleteDeceasedPerson(id);
+      return await deleteDeceased(id);
     } catch (error) {
       console.error('Deletion error: ', error);
       throw error;
@@ -30,7 +30,7 @@ export const deleteDeceasedSelector = selectorFamily<void, number>({
   set:
     (id: number) =>
     ({ set }) => {
-      set(deceasedPeopleAtom, prevState =>
+      set(deceasedAtom, prevState =>
         prevState.filter(person => person.id !== id)
       );
     },

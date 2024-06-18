@@ -4,7 +4,7 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
 import HebrewCalendar from '@components/HebrewCalendar.tsx';
-import { saveDeceasedPerson } from '@services/api/deceasedPeople';
+import { saveDeceased } from '@services/api/deceasedApi';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { defaultDeceasedValues } from '@constants/defaultValues';
 import { useRecoilValue } from 'recoil';
@@ -41,7 +41,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
 
   const submitHandler = useSubmitForm({
     formatData: useFormatDeceased,
-    saveFunction: saveDeceasedPerson,
+    saveFunction: saveDeceased,
     submit,
     callback: closeDialog,
   });

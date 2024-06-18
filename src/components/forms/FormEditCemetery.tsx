@@ -3,7 +3,7 @@ import { Card } from 'primereact/card';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
-import { saveCemetery } from '@services/api/cemeteries';
+import { saveCemetery } from '@services/api/cemeteriesApi';
 import { CemeteryInterface } from '@type/cemeteriesInterface';
 import AddressFields from '@components/fields/AddressFields';
 import useHasErrors from '@utils/useHasErrors';

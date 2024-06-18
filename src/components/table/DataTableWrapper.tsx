@@ -9,42 +9,32 @@ import useExpanderColumn from './hooks/useExpanderColumn';
 interface DataTableWrapperProps<T> {
   data: T[];
   loading: boolean;
-  withExpand?: boolean;
   columns: ColumnProps[];
   fieldsToFilter: string[];
   filters: { [key: string]: { value: string; matchMode: FilterMatchMode } };
   headerTemplate: ReactNode;
   emptyMessage?: string;
-  rowExpansionTemplate: (data: T) => ReactNode;
+  withExpand?: boolean;
+  expanderProp?: string;
+  rowExpansionTemplate?: (data: T) => ReactNode;
 }
-
-// const expanderIconTemplate = ({ props: { rowData } }) => {
-//   console.log('rowData: ', rowData);
-//   if (rowData.address) {
-//     return <i className='pi pi-chevron-left'></i>;
-//   } else {
-//     return (
-//       <i className='pi pi-chevron-left pointer-events-none opacity-20'></i>
-//     );
-//   }
-// };
-
 const DataTableWrapper = <T extends object>({
   data,
   loading,
-  withExpand = false,
   columns,
   filters,
   fieldsToFilter,
   headerTemplate,
   emptyMessage,
+  withExpand = false,
+  expanderProp,
   rowExpansionTemplate,
 }: DataTableWrapperProps<T>): JSX.Element => {
   const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState<
     DataTableExpandedRows | undefined
   >(undefined);
-  const expanderColumn = useExpanderColumn();
+  const expanderColumn = useExpanderColumn(expanderProp);
 
   return (
     <DataTable

@@ -1,8 +1,8 @@
 // i18n.js
-import i18n from 'i18next';
+import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-i18n
+i18next
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources: {
@@ -13,6 +13,7 @@ i18n
       },
       he: {
         translation: {
+          'Contacts of the deceased': 'אנשי קשר של הנפטר',
           'Address information': 'כתובת',
           'Line 1 is required': 'שורה 1 זה שדה חובה',
           City: 'עיר',
@@ -66,21 +67,67 @@ i18n
           Search: 'חיפוש',
           // validations
           "can't be blank": 'שדה חובה',
+
+          // Relations
+          Father: 'אבא',
+          Mother: 'אמא',
+          Son: 'בן',
+          Daughter: 'בת',
+          Brother: 'אח',
+          Sister: 'אחות',
+          Husband: 'בעל',
+          Wife: 'אישה',
+          Uncle: 'דוד',
+          Aunt: 'דודה',
+          Nephew: 'אחיין',
+          Niece: 'אחיינית',
+          Cousin: 'בן דוד / בת דודה',
+          Grandfather: 'סבא',
+          Grandmother: 'סבתא',
+          Grandson: 'נכד',
+          Granddaughter: 'נכדה',
+          'Father-in-law': 'חם',
+          'Mother-in-law': 'חמות',
+          'Son-in-law': 'חתן',
+          'Daughter-in-law': 'כלה',
+          'Brother-in-law': 'גיס',
+          'Sister-in-law': 'גיסה',
+          Stepfather: 'אב חורג',
+          Stepmother: 'אם חורגת',
+          Stepson: 'בן חורג',
+          Stepdaughter: 'בת חורגת',
+          'Half-brother': 'אח למחצה',
+          'Half-sister': 'אחות למחצה',
+          Godfather: 'סנדק',
+          Godmother: 'סנדקית',
+          Godson: 'בן סנדקות',
+          Goddaughter: 'בת סנדקות',
         },
       },
     },
     lng: 'he', // default language
     fallbackLng: 'he', // default language to use
-    returnObjects: true,
-    keySeparator: false, // setting keySeparator to false means that dots in keys are not treated as path separators
+    returnObjects: false,
     react: {
       useSuspense: false,
     },
-    debug: false, // toggle this to see logs for debugging
-    saveMissing: true, // saves new keys to the translation file (useful during development)
-    missingKeyHandler: key => {
-      return key; // This ensures that the key itself is returned if the translation is missing
+    debug: true, // toggle this to see logs for debugging
+    missingKeyHandler: (
+      lngs,
+      ns,
+      key,
+      fallbackValue,
+      updateMissing,
+      options
+    ) => {
+      console.log('fallbackValue: ', fallbackValue);
+      return 'test';
+    },
+    parseMissingKeyHandler(key, defaultValue, c, d, e) {
+      console.log('c,d,e: ', c, d, e);
+      console.log('key: ', key);
+      console.log('defaultValue: ', defaultValue);
+      return 'test';
     },
   });
-
-export default i18n;
+export default i18next;

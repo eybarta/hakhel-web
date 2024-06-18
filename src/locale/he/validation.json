@@ -1,0 +1,14 @@
+
+{
+  "address is required": "כתובת זה שדה חובה",
+  "city is required": "עיר זה שדה חובה",
+  "country is required": "מדינה זה שדה חובה",
+  "first name is required": "שם פרטי זה שדה חובה",
+  "gender is required": "מין זה שדה חובה",
+  "hebrew date of death is required": "תאריך פטירה בעברית זה שדה חובה",
+  "last name is required": "שם משפחה זה שדה חובה",
+  "line 1 is required": "שורה 1 זה שדה חובה",
+  "name is required": "שם זה שדה חובה",
+  "please correct the errors in the form": "יש שדות לא תקינים בטופס",
+  "postal code is required": "מיקוד זה שדה חובה"
+}

@@ -9,16 +9,35 @@ interface RelationInterface {
   token: string;
 }
 
+////////////////////////////////////////////////////////////////
+/*
+	Structure of properties of deceased under contact,
+	when building in client.
+*/
+////////////////////////////////////////////////////////////////
 export interface RelationToDeceasedClientInterface {
   relation_of_deceased_to_contact: string;
   deceased_person_attributes: DeceasedPersonInterface;
 }
+
+////////////////////////////////////////////////////////////////
+/*
+	Structure of contact under deceased,
+	when building in client. (inside relation array)
+*/
+////////////////////////////////////////////////////////////////
 
 export interface RelationToContactClientInterface {
   relation_of_deceased_to_contact: string;
   contact_person_attributes: ContactInterface;
 }
 
+////////////////////////////////////////////////////////////////
+/*
+	Structure of properties of contacts under deceased,
+	when building in client.
+*/
+////////////////////////////////////////////////////////////////
 export interface RelationToDeceasedAttributesInterface {
   relations_attributes: RelationToDeceasedClientInterface[];
 }
@@ -28,8 +47,8 @@ export interface RelationToContactAttributesInterface {
 }
 
 export interface RelationToDeceasedServerInterface extends RelationInterface {
-  contact_person: ContactInterface;
+  deceased_person: DeceasedPersonInterface;
 }
 export interface RelationToContactServerInterface extends RelationInterface {
-  deceased_person: DeceasedPersonInterface;
+  contact_person: ContactInterface;
 }

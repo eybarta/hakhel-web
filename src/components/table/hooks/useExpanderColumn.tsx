@@ -4,9 +4,15 @@ import { ColumnBodyOptions } from 'primereact/column';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useExpanderColumn = <
-  T extends { id: number | string; address?: string }
->() => {
+type DataType = {
+  id: number | string;
+  [key: string]: any;
+};
+
+const useExpanderColumn = <T extends DataType>(
+  expanderProp: keyof T,
+  disableEmpty: boolean = false
+) => {
   const { t } = useTranslation();
   return useMemo(
     () => ({
@@ -19,13 +25,14 @@ const useExpanderColumn = <
           expander,
           props: { expandedRows },
         } = options;
-        const { id, address } = data;
+        const { id } = data;
+        const prop = data[expanderProp];
 
         const isExpanded =
           expandedRows?.some((row: T) => row.id === id) || false;
 
         const baseClass = 'pi pi-chevron-left';
-        const className = isExpanded
+        const iconClass = isExpanded
           ? `${baseClass} pi-chevron-down`
           : baseClass;
 
@@ -35,19 +42,21 @@ const useExpanderColumn = <
           }
         };
 
-        const tooltip = !address ? t('No address') : '';
+        const blockExpand = !prop.length && disableEmpty;
+        const tooltip = blockExpand ? t(`No ${String(expanderProp)}`) : '';
+        const className = blockExpand ? 'opacity-20' : '';
 
         return (
           <Button
-            icon={className}
+            icon={iconClass}
             rounded
             text
             severity='secondary'
             aria-label='Toggle'
             tooltip={tooltip}
-            className={!address ? 'opacity-20' : ''}
+            className={className}
             tooltipOptions={{ position: 'bottom', mouseTrack: true }}
-            onClick={address ? handleClick : undefined}
+            onClick={!blockExpand ? handleClick : undefined}
           />
         );
       },

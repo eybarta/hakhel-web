@@ -4,9 +4,10 @@ import {
 } from '@type/deceasedInterface';
 import api from '@api/apiService.ts';
 
-export async function fetchDeceasedPeople() {
+export async function fetchAllDeceased() {
   try {
-    const response = await api.get('deceased_people'); // Adjust the endpoint as needed
+    const response = await api.get('deceased_people?include_all'); // Adjust the endpoint as needed
+    console.log('DECEASED response: ', response);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -14,7 +15,7 @@ export async function fetchDeceasedPeople() {
   }
 }
 
-export async function saveDeceasedPerson(
+export async function saveDeceased(
   data: DeceasedPersonServerInterface
 ): Promise<DeceasedPersonInterface> {
   const {
@@ -31,7 +32,7 @@ export async function saveDeceasedPerson(
   }
 }
 
-export async function deleteDeceasedPerson(id: number) {
+export async function deleteDeceased(id: number) {
   try {
     const response = await api.delete(`deceased_people/${id}`);
     console.log('DELETE response: ', response);
