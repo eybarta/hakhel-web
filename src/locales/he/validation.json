@@ -1,4 +1,3 @@
-
 {
   "address is required": "כתובת זה שדה חובה",
   "city is required": "עיר זה שדה חובה",
@@ -10,5 +9,7 @@
   "line 1 is required": "שורה 1 זה שדה חובה",
   "name is required": "שם זה שדה חובה",
   "please correct the errors in the form": "יש שדות לא תקינים בטופס",
-  "postal code is required": "מיקוד זה שדה חובה"
+  "postal code is required": "מיקוד זה שדה חובה",
+  "relation is required": "חובה למלא קשר לנפטר",
+  "phone is required": "טלפון זה שדה חובה"
 }

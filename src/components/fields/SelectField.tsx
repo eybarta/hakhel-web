@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Field, FieldProps, FieldHookConfig } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Options } from '@type/options';
@@ -31,9 +31,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
           )}
           <Dropdown
             pt={{ root: { className: 'w-full' } }}
-            appendTo={'self'}
             inputId={name}
             options={options}
+            dataKey={name}
             {...field}
             placeholder={t(label || 'Select')}
             className={meta.touched && meta.error ? 'p-invalid' : ''}

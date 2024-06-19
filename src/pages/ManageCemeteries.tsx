@@ -97,10 +97,10 @@ const ManageCemeteries = () => {
         confirmPopup({
           target: e.currentTarget,
           message: 'למחוק את הבית עלמין הזה?',
-          icon: 'pi pi-exclamation-triangle',
+          icon: 'pi pi-exclamation-triangle text-yellow-800',
           defaultFocus: 'accept',
-          acceptLabel: 'כן',
-          rejectLabel: 'לא',
+          acceptLabel: t('yes'),
+          rejectLabel: t('no'),
           accept: async () => await confirmDelete(snapshot, release, id),
           reject: () => console.log('Rejected'),
         });

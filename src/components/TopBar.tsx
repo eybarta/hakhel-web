@@ -56,6 +56,8 @@ export default function TopBar() {
     {
       label: 'אנשי קשר',
       icon: 'pi pi-user',
+      url: '/contacts',
+      className: location.pathname === '/contacts' ? 'active' : '', //location.pathname === '/deceased' ? 'bg-info-800' : ''
     },
   ];
   const end = (

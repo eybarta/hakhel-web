@@ -1028,9 +1028,7 @@
     min-width: 100%;
   }
   .p-dropdown-panel {
-    position: absolute;
-    top: 0;
-    right: 0;
+		@apply absolute top-0 !right-auto;
   }
   .p-dropdown-items-wrapper {
     overflow: auto;

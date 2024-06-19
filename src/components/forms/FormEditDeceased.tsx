@@ -32,13 +32,14 @@ const parseInitialValues = (initialValues: DeceasedPersonInterface | null) => {
   const values = initialValues || defaultDeceasedValues;
   const { relations, ...restData } = values;
 
-  const relations_attributes = relations?.map(relation => {
-    const { contact_person, ...restContact } = relation;
-    return {
-      ...restContact,
-      contact_person_attributes: contact_person,
-    };
-  });
+  const relations_attributes =
+    relations?.map(relation => {
+      const { contact_person, ...restContact } = relation;
+      return {
+        ...restContact,
+        contact_person_attributes: contact_person,
+      };
+    }) || [];
 
   return {
     ...restData,
@@ -105,8 +106,8 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                 handleSubmit(e);
               }}
             >
-              <div className='break-words w-full'>{JSON.stringify(values)}</div>
-              <TabView>
+              {/* <div className='break-words w-full'>{JSON.stringify(values)}</div> */}
+              <TabView panelContainerClassName='max-h-[60vh] overflow-auto'>
                 <TabPanel
                   header={t('deceased information')}
                   leftIcon='pi pi-user ml-2'
@@ -181,7 +182,19 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                     </div>
                   </div>
                 </TabPanel>
-                <TabPanel header={t('contacts')} leftIcon='pi pi-users ml-2'>
+                <TabPanel
+                  header={t('contacts')}
+                  pt={{
+                    headerAction: {
+                      className: hasErrors(errors, touched, [
+                        'relations_attributes',
+                      ])
+                        ? 'text-red-500'
+                        : '',
+                    },
+                  }}
+                  leftIcon='pi pi-users ml-2'
+                >
                   <FormEditContactList
                     values={values}
                     errors={errors}

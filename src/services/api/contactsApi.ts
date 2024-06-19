@@ -6,7 +6,7 @@ import api from '@api/apiService.ts';
 
 export async function fetchContacts() {
   try {
-    const response = await api.get('contact_people'); // Adjust the endpoint as needed
+    const response = await api.get('contact_people?include_all'); // Adjust the endpoint as needed
     return response.data;
   } catch (error) {
     console.error(error);
