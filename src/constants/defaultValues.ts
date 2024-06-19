@@ -1,6 +1,7 @@
 import { AddressInterface } from '@type/addressInterface';
 import { CemeteryInterface } from '../types/cemeteriesInterface';
 import { DeceasedPersonInterface } from '@type/deceasedInterface';
+import { ContactInterface } from '@type/contactsInterface';
 
 export const defaultAddressValues: AddressInterface = {
   line1: '',
@@ -8,6 +9,17 @@ export const defaultAddressValues: AddressInterface = {
   city: '',
   country: '',
   postal_code: '',
+};
+
+export const defaultContactValues: ContactInterface = {
+  id: null,
+  first_name: '',
+  last_name: '',
+  gender: '',
+  email: '',
+  phone: '',
+  address_attributes: defaultAddressValues,
+  relations_attributes: [],
 };
 
 export const defaultDeceasedValues: DeceasedPersonInterface = {
@@ -24,6 +36,7 @@ export const defaultDeceasedValues: DeceasedPersonInterface = {
   cemetery_id: null,
   cemetery_region: '',
   cemetery_parcel: '',
+  relations_attributes: [],
 };
 
 export const defaultCemeteryValues: CemeteryInterface = {

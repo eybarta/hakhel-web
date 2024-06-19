@@ -4730,18 +4730,8 @@
 		@apply -mb-0.5 ml-0 h-8;
   }
   .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-		@apply cursor-pointer border-gray-200 border-b-2 bg-white text-gray-400 px-3.5 rounded-t-lg h-full flex;
-    /* border: solid #e5e7eb;
-    border-width: 0 0 2px 0;
-    border-color: transparent transparent #e5e7eb transparent;
-    background: #ffffff;
-    color: #6b7280;
-    padding: 0 1.25rem;
-    font-weight: 700;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px; */
+		@apply cursor-pointer border-gray-200 border-b-2 bg-white text-gray-400 px-3.5 rounded-t-lg h-full flex items-center;
     transition: box-shadow 0.2s;
-    /* margin: 0 0 -1px 0; */
   }
   .p-tabview .p-tabview-nav li .p-tabview-nav-link:not(.p-disabled):focus-visible {
     outline: 0 none;

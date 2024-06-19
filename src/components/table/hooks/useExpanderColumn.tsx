@@ -42,7 +42,7 @@ const useExpanderColumn = <T extends DataType>(
           }
         };
 
-        const blockExpand = !prop.length && disableEmpty;
+        const blockExpand = !prop?.length && disableEmpty;
         const tooltip = blockExpand ? t(`No ${String(expanderProp)}`) : '';
         const className = blockExpand ? 'opacity-20' : '';
 
@@ -51,6 +51,7 @@ const useExpanderColumn = <T extends DataType>(
             icon={iconClass}
             rounded
             text
+            size='small'
             severity='secondary'
             aria-label='Toggle'
             tooltip={tooltip}

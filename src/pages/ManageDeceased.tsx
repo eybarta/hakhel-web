@@ -40,6 +40,8 @@ import DataTableWrapper from '@components/table/DataTableWrapper';
 import RowActions from '@components/table/RowActions';
 import FormEditDeceased from '@components/forms/FormEditDeceased';
 import ManageDeceasedTableHeader from '@components/table/templates/ManageDeceasedTableHeader';
+import { Button } from 'primereact/button';
+import { ContactInterface } from '@type/contactsInterface';
 
 const ManageDeceased = () => {
   const { t } = useTranslation();
@@ -145,33 +147,71 @@ const ManageDeceased = () => {
   // util
   const findCemetery = useFindCemetery(cemeteries);
 
-  const contactCardFooter = contact => {
+  const editContact = (contact: ContactInterface) => {
+    console.log('editContact: ', contact);
+  };
+  const contactCardFooter = (contact: ContactInterface) => {
     console.log('contact: ', contact);
-    return <div>CARD FOOTER</div>;
+    return (
+      <div className='w-full flex flex-row-reverse'>
+        <Button
+          icon='pi pi-pencil'
+          rounded
+          text
+          size='small'
+          severity='secondary'
+          aria-label='Edit Contact'
+          onClick={() => editContact(contact)}
+        />
+      </div>
+    );
   };
   const rowExpansionTemplate = (data: DeceasedPersonInterface) => {
     console.log('data.relations: ', data.relations);
     const { relations } = data;
     return relations?.length ? (
-      <div className='flex gap-3 items-start w-full'>
-        <h4>{t('contacts of the deceased')}</h4>
-        {relations.map(relation => {
-          const { contact_person } = relation;
-          return (
-            <Card
-              key={relation.id}
-              title={`${contact_person.first_name} ${contact_person.last_name}`}
-              subTitle={t(relation.relation_of_deceased_to_contact)}
-              footer={contactCardFooter}
-              className='md:w-25rem'
-            >
-              <p className='m-0'>{JSON.stringify(relation)}</p>
-            </Card>
-            // <div className='max-w-96 break-words flex flex-col flex-1 rounded-md border border-blue-400'>
-            //   {JSON.stringify(relation)}
-            // </div>
-          );
-        })}
+      <div>
+        <h4 className='text-2xl text-slate-500 mb-6 font-bold'>
+          {t('contacts of the deceased')}
+        </h4>
+        <div className='flex gap-3 items-start w-full'>
+          {relations.map(relation => {
+            const { contact_person } = relation;
+            return (
+              <Card
+                key={relation.id}
+                title={`${contact_person.first_name} ${contact_person.last_name}`}
+                subTitle={`${t('relationship')}: ${t(
+                  relation.relation_of_deceased_to_contact,
+                  {
+                    ns: 'relations',
+                  }
+                )}`}
+                footer={() => contactCardFooter(contact_person)}
+                className='md:w-25rem'
+              >
+                <div>
+                  {contact_person.email && (
+                    <p className='flex gap-2'>
+                      <span>{t('email')}:</span>
+                      <span>{contact_person.email}</span>
+                    </p>
+                  )}
+                  {contact_person.phone && (
+                    <p className='flex items-center gap-2'>
+                      <i className='pi pi-mobile'></i>
+                      <span>{contact_person.phone}</span>
+                    </p>
+                  )}
+                </div>
+                {/* <p className='m-0'>{JSON.stringify(relation)}</p> */}
+              </Card>
+              // <div className='max-w-96 break-words flex flex-col flex-1 rounded-md border border-blue-400'>
+              //   {JSON.stringify(relation)}
+              // </div>
+            );
+          })}
+        </div>
       </div>
     ) : (
       <div className='p-3'>NO RELATIONS YET!</div>
