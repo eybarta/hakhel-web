@@ -19,7 +19,7 @@ import SelectField from '@components/fields/SelectField';
 import useSelectOptions from '@constants/selectOptions';
 import FormError from './FormError';
 import DialogHeader from '@components/DialogHeader';
-import useSubmitForm from '@utils/useSubmitForm';
+import useSubmitForm from '@hooks/useSubmitForm';
 import useFormatDeceased from '@services/formatters/useFormatDeceased';
 import FormEditContactList from './FormEditContactList';
 interface FormEditDeceasedProps {

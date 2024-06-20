@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Formik, Form } from 'formik';
 import { ContactInterface } from '@type/contactsInterface';
 import { defaultContactValues } from '@constants/defaultValues';
-import useSubmitForm from '@utils/useSubmitForm';
+import useSubmitForm from '@hooks/useSubmitForm';
 import { saveContact } from '@services/api/contactsApi';
 import useFormatContact from '@services/formatters/useFormatContact';
 import ContactFields from '@components/fields/ContactFields';

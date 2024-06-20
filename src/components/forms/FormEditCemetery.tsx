@@ -16,7 +16,7 @@ import {
 import useCemeteryValidation from '@validations/useCemeteryValidation';
 import InputTextField from '@components/fields/InputTextField';
 import FormError from './FormError';
-import useSubmitForm from '@utils/useSubmitForm';
+import useSubmitForm from '@hooks/useSubmitForm';
 import useFormatCemetery from '@services/formatters/useFormatCemetery';
 import DialogHeader from '@components/DialogHeader';
 interface FormEditCemeteryProps {

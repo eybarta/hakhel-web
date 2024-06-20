@@ -54,3 +54,8 @@ export const defaultRelationToContact: RelationToContactClientInterface = {
   relation_of_deceased_to_contact: '',
   contact_person_attributes: defaultContactValues,
 };
+
+export const defaultRelationToDeceased: RelationToDeceasedClientInterface = {
+  relation_of_deceased_to_contact: '',
+  deceased_person_attributes: defaultDeceasedValues,
+};

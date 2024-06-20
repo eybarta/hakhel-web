@@ -5,7 +5,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-		"esModuleInterop": true,
+    "esModuleInterop": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -19,11 +19,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-		"baseUrl": "src",
+    "baseUrl": "src",
     "paths": {
       "@state/*": ["state/*"],
       "@components/*": ["components/*"],
       "@utils/*": ["utils/*"],
+      "@hooks/*": ["hooks/*"],
       "@context/*": ["components/context/*"],
       "@providers/*": ["providers/*"],
       "@services/*": ["services/*"],
@@ -31,7 +32,7 @@
       "@type/*": ["types/*"],
       "@constants/*": ["constants/*"],
       "@validations/*": ["validations/*"],
-      "@mocks/*": ["src/__mocks__/*"],
+      "@mocks/*": ["src/__mocks__/*"]
     }
   },
   "include": ["src", "src/__mocks__"],
