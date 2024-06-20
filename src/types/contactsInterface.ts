@@ -13,8 +13,8 @@ export interface ContactInterface {
   gender: string;
   created_at?: Date;
   updated_at?: Date;
-  address_attributes?: AddressInterface;
-  address?: AddressInterface;
+  address_attributes?: AddressInterface | undefined;
+  address?: AddressInterface | undefined;
   relations_attributes?: RelationToDeceasedClientInterface[];
   relations?: RelationToDeceasedServerInterface[];
 }

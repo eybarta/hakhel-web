@@ -3,6 +3,7 @@ import {
   ContactServerInterface,
 } from '@type/contactsInterface';
 import api from '@api/apiService.ts';
+import useMaybeExcludeAddress from '@utils/useMaybeExcludeAddress';
 
 export async function fetchContacts() {
   try {
@@ -23,6 +24,9 @@ export async function saveContact(
   try {
     const method = id ? 'put' : 'post';
     const url = `contact_people${id ? `/${id}` : ''}`;
+
+    data.contact_person = useMaybeExcludeAddress(data.contact_person);
+
     const response = await api[method](url, data);
     return response.data;
   } catch (error) {

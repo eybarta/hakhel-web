@@ -19,6 +19,7 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
   value,
   label,
   name,
+  fieldName,
   validationProp,
 }) => {
   const [monthViewDate, setMonthViewDate] = useState<Date>(value || new Date());
@@ -81,9 +82,22 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
   ) => {
     if (hebrewDateParts && setFieldValue) {
       const { d, m, y } = hebrewDateParts;
-      setFieldValue('hebrew_year_of_death', y);
-      setFieldValue('hebrew_month_of_death', m);
-      setFieldValue('hebrew_day_of_death', d);
+      console.log('fieldName: ', fieldName);
+      const hebrew_year_of_death = fieldName
+        ? fieldName('hebrew_year_of_death')
+        : 'hebrew_year_of_death';
+      const hebrew_month_of_death = fieldName
+        ? fieldName('hebrew_month_of_death')
+        : 'hebrew_month_of_death';
+      const hebrew_day_of_death = fieldName
+        ? fieldName('hebrew_day_of_death')
+        : 'hebrew_day_of_death';
+      setFieldValue(hebrew_year_of_death, y);
+      console.log('hebrew_year_of_death: ', hebrew_year_of_death);
+      setFieldValue(hebrew_month_of_death, m);
+      console.log('hebrew_month_of_death: ', hebrew_month_of_death);
+      setFieldValue(hebrew_day_of_death, d);
+      console.log('hebrew_day_of_death: ', hebrew_day_of_death);
     }
   };
 

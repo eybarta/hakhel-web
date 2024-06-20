@@ -14,6 +14,8 @@
   "cemetery region": "מספר גוש",
   "cemetery": "בית עלמין",
   "city": "עיר",
+  "line 1": "שורה 1",
+  "line 2": "שורה 2",
   "confirm_remove_contact": "האם לבטל את הקישור בין האיש קשר הזה לנפטר?",
   "contact person": "איש קשר",
   "contacts of the deceased": "אנשי קשר של הנפטר",
@@ -57,5 +59,11 @@
   "sign in": "כניסה",
   "welcome_message": "ברוך הבא ל-React",
   "yes": "כן",
-  "deceased_related_to_contact": "פרטי נפטרים"
+  "deceased_related_to_contact": "פרטי נפטרים",
+  "add contact": "הוסף איש קשר",
+  "description": "תיאור",
+  "contact information": "פרטי התקשרות",
+  "related deceased": "קשר לנפטרים",
+  "no_deceased_available": "אין נפטרים",
+  "deleted_on_save": "ימחק לאחר שמירה"
 }

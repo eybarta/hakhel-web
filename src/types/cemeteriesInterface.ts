@@ -6,8 +6,8 @@ export interface CemeteryInterface {
   name: string;
   created_at?: Date;
   updated_at?: Date;
-  address_attributes?: AddressInterface;
-  address?: AddressInterface;
+  address_attributes?: AddressInterface | undefined;
+  address?: AddressInterface | undefined;
 }
 
 export type CemeteryServerInterface = {

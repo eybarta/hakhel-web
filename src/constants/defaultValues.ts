@@ -2,6 +2,10 @@ import { AddressInterface } from '@type/addressInterface';
 import { CemeteryInterface } from '../types/cemeteriesInterface';
 import { DeceasedPersonInterface } from '@type/deceasedInterface';
 import { ContactInterface } from '@type/contactsInterface';
+import {
+  RelationToContactClientInterface,
+  RelationToDeceasedClientInterface,
+} from '@type/relationshipsInterface';
 
 export const defaultAddressValues: AddressInterface = {
   line1: '',
@@ -44,4 +48,9 @@ export const defaultCemeteryValues: CemeteryInterface = {
   name: '',
   description: '',
   address_attributes: defaultAddressValues,
+};
+
+export const defaultRelationToContact: RelationToContactClientInterface = {
+  relation_of_deceased_to_contact: '',
+  contact_person_attributes: defaultContactValues,
 };

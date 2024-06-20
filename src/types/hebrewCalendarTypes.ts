@@ -4,6 +4,7 @@ export interface HebrewCalendarProps {
   name: string;
   label: string;
   validationProp?: string;
+  fieldName?: (field: string) => string;
   // onChange: (hebrewDateParts: HebrewDateParts) => void;
 }
 

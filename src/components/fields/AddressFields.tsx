@@ -17,17 +17,17 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
 }) => {
   // const { line1, line2, city, country, postal_code } = value;
   return (
-    <div className='flex flex-col gap-2.5'>
-      <InputTextField name={`${prefix}.line1`} label='Line 1'></InputTextField>
-      <InputTextField name={`${prefix}.line2`} label='Line 2'></InputTextField>
-      <InputTextField name={`${prefix}.city`} label='City'></InputTextField>
+    <div className='flex flex-col gap-3.5'>
+      <InputTextField name={`${prefix}.line1`} label='line 1'></InputTextField>
+      <InputTextField name={`${prefix}.line2`} label='line 2'></InputTextField>
+      <InputTextField name={`${prefix}.city`} label='city'></InputTextField>
       <InputTextField
         name={`${prefix}.country`}
-        label='Country'
+        label='country'
       ></InputTextField>
       <InputTextField
         name={`${prefix}.postal_code`}
-        label='Postal code'
+        label='postal code'
       ></InputTextField>
     </div>
   );

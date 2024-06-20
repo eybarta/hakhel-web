@@ -2,9 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// Types
-import type { DeceasedPersonInterface } from '@type/deceasedInterface';
-
 // Global Contexts
 import { useToast } from '@components/context/ToastContext';
 import { useConfirm } from '@components/context/ConfirmContext';
@@ -21,7 +18,6 @@ import {
 
 import {
   deceasedDataSelector,
-  deleteDeceasedSelector,
   cemeteriesDataSelector,
   deceasedAtom,
   cemeteriesAtom,
@@ -35,16 +31,16 @@ import useFindCemetery from '@utils/useFindCemetery';
 
 // PrimeReact UI components
 import { Card } from 'primereact/card';
-import { ProgressSpinner } from 'primereact/progressspinner';
 import { FilterMatchMode } from 'primereact/api';
 
 // App Components
 import DataTableWrapper from '@components/table/DataTableWrapper';
 import RowActions from '@components/table/RowActions';
 import FormEditContact from '@components/forms/FormEditContact';
-import ManageDeceasedTableHeader from '@components/table/templates/ManageDeceasedTableHeader';
 import { Button } from 'primereact/button';
 import { ContactInterface } from '@type/contactsInterface';
+import { RelationToDeceasedServerInterface } from '@type/relationshipsInterface';
+import ManageTableHeader from '@components/table/templates/ManageTableHeader';
 
 const ManageDeceased = () => {
   const { t } = useTranslation();
@@ -120,6 +116,7 @@ const ManageDeceased = () => {
   const editContact = (data: ContactInterface | null) => {
     showDialog(
       <FormEditContact
+        isStandalone={true}
         propValues={data}
         closeDialog={hideDialog}
         submit={onSubmit}
@@ -148,9 +145,11 @@ const ManageDeceased = () => {
 
   const tableHeaderTemplate = () => {
     return (
-      <ManageDeceasedTableHeader
+      <ManageTableHeader
         onSearch={onGlobalFilterChange}
         onAdd={() => editContact(null)}
+        addLabel='add contact'
+        title='contacts'
       />
     );
   };
@@ -186,7 +185,7 @@ const ManageDeceased = () => {
           {t('deceased_related_to_contact')}
         </h4>
         <div className='flex gap-3 items-start w-full'>
-          {relations.map(relation => {
+          {relations.map((relation: RelationToDeceasedServerInterface) => {
             const { deceased_person } = relation;
             return (
               <Card

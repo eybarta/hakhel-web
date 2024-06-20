@@ -125,7 +125,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                   <div className='break-words ltr text-left'>
                     {JSON.stringify(values)}
                   </div> */}
-                  <div className='flex flex-col gap-2.5'>
+                  <div className='flex flex-col gap-3.5'>
                     <div className='flex items-start justify-between gap-5'>
                       <InputTextField
                         name='first_name'
@@ -137,11 +137,13 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                       ></InputTextField>
                     </div>
                     <div className='flex items-start justify-between gap-5'>
-                      <SelectField
-                        name='gender'
-                        label='select gender'
-                        options={genderOptions}
-                      ></SelectField>
+                      <div className='flex-1 max-w-48'>
+                        <SelectField
+                          name='gender'
+                          label='select gender'
+                          options={genderOptions}
+                        ></SelectField>
+                      </div>
                       <HebrewCalendar
                         inputId='hebrewDate'
                         label='date of death'
@@ -163,7 +165,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                     },
                   }}
                 >
-                  <div className='flex flex-col gap-2.5'>
+                  <div className='flex flex-col gap-3.5'>
                     <SelectField
                       name='cemetery_id'
                       label='select cemetery'

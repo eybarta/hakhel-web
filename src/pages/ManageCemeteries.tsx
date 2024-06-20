@@ -28,14 +28,10 @@ import { FilterMatchMode } from 'primereact/api';
 import FormEditCemetery from '@components/forms/FormEditCemetery';
 import RowActions from '@components/table/RowActions';
 import DataTableWrapper from '@components/table/DataTableWrapper';
-import ManageCemeteriesTableHeader from '@components/table/templates/ManageCemeteriesTableHeader';
 
 // Types
 import type { CemeteryInterface } from '@type/cemeteriesInterface';
-import { ColumnBodyOptions, ColumnPassThroughType } from 'primereact/column';
-import { PassThroughType } from 'primereact/utils';
-import { Button } from 'primereact/button';
-import { DataTable } from 'primereact/datatable';
+import ManageTableHeader from '@components/table/templates/ManageTableHeader';
 
 const ManageCemeteries = () => {
   const { t } = useTranslation();
@@ -126,27 +122,32 @@ const ManageCemeteries = () => {
   // UI Renderers
   const tableHeaderTemplate = () => {
     return (
-      <ManageCemeteriesTableHeader
+      <ManageTableHeader
         onSearch={onGlobalFilterChange}
         onAdd={() => editCemetery(null)}
+        addLabel='add cemetery'
+        title='cemeteries information'
       />
     );
   };
 
   const rowExpansionTemplate = (data: CemeteryInterface) => {
     console.log('data.address: ', data.address);
-    const {
-      address: { line1, city, postal_code },
-    } = data;
-    return (
-      <div className='p-3'>
-        <h5 className='font-semibold mb-2'>{t('cemetery address')}</h5>
-        <p>{line1}</p>
-        <p>
-          {city}, {postal_code}
-        </p>
-      </div>
-    );
+    if (data.address) {
+      const {
+        address: { line1, city, postal_code },
+      } = data;
+      return (
+        <div className='p-3'>
+          <h5 className='font-semibold mb-2'>{t('cemetery address')}</h5>
+          <p>{line1}</p>
+          <p>
+            {city}, {postal_code}
+          </p>
+        </div>
+      );
+    }
+    return <h5 className='font-semibold mb-2'>{t('no address')}</h5>;
   };
 
   const columns = [
@@ -169,8 +170,6 @@ const ManageCemeteries = () => {
       field: 'description',
       header: t('description'),
     },
-
-    // <Column expander={allowExpansion} style={{ width: '5rem' }} />
   ];
   const fieldsToFilter = ['name', 'description'];
 

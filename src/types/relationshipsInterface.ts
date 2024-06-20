@@ -6,7 +6,8 @@ interface RelationInterface {
   relation_of_deceased_to_contact: string;
   deceased_person_id?: number;
   contact_person_id?: number;
-  token: string;
+  token?: string;
+  _destroy?: number;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@ interface RelationInterface {
 	when building in client.
 */
 ////////////////////////////////////////////////////////////////
-export interface RelationToDeceasedClientInterface {
+export interface RelationToDeceasedClientInterface extends RelationInterface {
   relation_of_deceased_to_contact: string;
   deceased_person_attributes: DeceasedPersonInterface;
 }
@@ -27,7 +28,7 @@ export interface RelationToDeceasedClientInterface {
 */
 ////////////////////////////////////////////////////////////////
 
-export interface RelationToContactClientInterface {
+export interface RelationToContactClientInterface extends RelationInterface {
   relation_of_deceased_to_contact: string;
   contact_person_attributes: ContactInterface;
 }

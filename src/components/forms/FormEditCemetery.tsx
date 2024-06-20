@@ -24,7 +24,14 @@ interface FormEditCemeteryProps {
   submit: (response: CemeteryInterface) => void;
   propValues?: CemeteryInterface | null; // Assuming it's optional and can be null
 }
-
+const parseInitialValues = (initialValues: CemeteryInterface | null) => {
+  const values = initialValues || defaultCemeteryValues;
+  const { address, ...restData } = values;
+  return {
+    ...restData,
+    address_attributes: address || defaultAddressValues,
+  };
+};
 const FormEditCemetery = ({
   closeDialog,
   submit,
@@ -35,14 +42,8 @@ const FormEditCemetery = ({
   const validationSchema = useCemeteryValidation();
   const hasErrors = useHasErrors();
 
-  const initialValues = propValues || defaultCemeteryValues;
-  const isEdit = !!initialValues.id;
-
-  const { address, ...restData } = initialValues;
-  const transformedInitialValues = {
-    ...restData,
-    address_attributes: address || defaultAddressValues,
-  };
+  // const initialValues = propValues || defaultCemeteryValues;
+  const initialValues = parseInitialValues(propValues);
 
   const submitHandler = useSubmitForm({
     formatData: useFormatCemetery,
@@ -66,7 +67,7 @@ const FormEditCemetery = ({
         className='w-full max-w-3xl min-w-[580px]'
       >
         <Formik
-          initialValues={transformedInitialValues}
+          initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={submitHandler}
         >
@@ -89,7 +90,7 @@ const FormEditCemetery = ({
                     },
                   }}
                 >
-                  <div className='flex flex-col gap-2.5'>
+                  <div className='flex flex-col gap-3.5'>
                     <InputTextField name='name' label='Name'></InputTextField>
                     <InputTextField
                       name='description'

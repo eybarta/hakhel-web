@@ -1,6 +1,7 @@
 import { CemeteryInterface } from '@type/cemeteriesInterface';
 import { CemeteryInterface } from '@type/cemeteriesInterface';
 import api from '@api/apiService.ts';
+import useMaybeExcludeAddress from '@utils/useMaybeExcludeAddress';
 
 type CemeteryServerInterface = {
   cemetery: CemeteryInterface;
@@ -27,28 +28,16 @@ export async function fetchCemetery(id: number, withAddress: boolean = false) {
   }
 }
 
-const parseCemeteryData = (data: CemeteryInterface) => {
-  if (data.address_attributes) {
-    const hasAddressData = Object.values(data.address_attributes).some(
-      value => value
-    );
-
-    if (!hasAddressData) {
-      const { address_attributes, ...restData } = data;
-      return restData;
-    }
-  }
-  return data;
-};
 export async function saveCemetery(data: CemeteryServerInterface) {
   const {
     cemetery: { id },
   } = data;
   try {
     const method = id ? 'put' : 'post';
-    data.cemetery = parseCemeteryData(data.cemetery);
-
     const url = `cemeteries${id ? `/${id}` : ''}`;
+
+    data.cemetery = useMaybeExcludeAddress(data.cemetery);
+
     const response = await api[method](url, data);
     return response.data;
   } catch (error) {
