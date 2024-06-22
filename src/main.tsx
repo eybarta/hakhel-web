@@ -4,7 +4,7 @@ import { PrimeReactProvider, locale, addLocale } from 'primereact/api';
 import { twMerge } from 'tailwind-merge';
 import { RecoilRoot } from 'recoil';
 
-import he from './locale/prime-he.json';
+import he from './locales/prime-he.json';
 import './base.css';
 import './index.css';
 import './i18n';

@@ -14,6 +14,7 @@ interface DialogContextType {
 
 interface DialogConfig {
   visible: boolean;
+  blockScroll: boolean;
   content: ReactElement | null;
 }
 
@@ -25,14 +26,15 @@ export const DialogProvider: React.FC<{ children: ReactNode }> = ({
   const [dialogConfig, setDialogConfig] = useState<DialogConfig>({
     visible: false,
     content: null,
+    blockScroll: true,
   });
 
   const showDialog = (content: ReactElement) => {
-    setDialogConfig({ visible: true, content });
+    setDialogConfig({ visible: true, blockScroll: true, content });
   };
 
   const hideDialog = () => {
-    setDialogConfig({ visible: false, content: null });
+    setDialogConfig({ visible: false, blockScroll: false, content: null });
   };
 
   return (
@@ -40,8 +42,11 @@ export const DialogProvider: React.FC<{ children: ReactNode }> = ({
       {children}
       <Dialog
         visible={dialogConfig.visible}
+        blockScroll={dialogConfig.blockScroll}
+        modal={true}
         onHide={hideDialog}
         content={() => dialogConfig.content}
+        maskClassName='backdrop-blur-sm'
       ></Dialog>
     </DialogContext.Provider>
   );

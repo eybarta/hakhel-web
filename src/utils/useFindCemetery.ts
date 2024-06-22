@@ -1,4 +1,4 @@
-import { CemeteryInterface } from '@type/cemeteries';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
 
 const useFindCemetery = (cemeteries: CemeteryInterface[]) => {
   const findCemetery = (id: number | null) => {

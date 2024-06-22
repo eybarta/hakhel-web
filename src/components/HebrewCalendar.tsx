@@ -12,8 +12,16 @@ import type {
   HebrewDateParts,
   DateLike,
 } from '@type/hebrewCalendarTypes';
+import { ErrorMessage, Field, FieldProps, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 
-const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
+const HebrewCalendar: React.FC<HebrewCalendarProps> = ({
+  value,
+  label,
+  name,
+  fieldName,
+  validationProp,
+}) => {
   const [monthViewDate, setMonthViewDate] = useState<Date>(value || new Date());
   const [selectedRawDate, setSelectedRawDate] = useState<Date | null>(value);
   const [hebrewDates, setHebrewDates] = useState<HebrewDates>({});
@@ -60,12 +68,63 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
     fetchHebrewDates();
   }, [monthViewDate]);
 
-  useEffect(() => {
-    if (selectedRawDate) {
-      const hebrewDateParts = fetchHebrewDateParts(selectedRawDate);
-      if (hebrewDateParts) onChange(hebrewDateParts);
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based, so add 1
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const parseAndsetHebrewDates = (
+    hebrewDateParts: HebrewDateParts,
+    setFieldValue: FormikHelpers<any>['setFieldValue']
+  ) => {
+    if (hebrewDateParts && setFieldValue) {
+      const { d, m, y } = hebrewDateParts;
+      console.log('fieldName: ', fieldName);
+      const hebrew_year_of_death = fieldName
+        ? fieldName('hebrew_year_of_death')
+        : 'hebrew_year_of_death';
+      const hebrew_month_of_death = fieldName
+        ? fieldName('hebrew_month_of_death')
+        : 'hebrew_month_of_death';
+      const hebrew_day_of_death = fieldName
+        ? fieldName('hebrew_day_of_death')
+        : 'hebrew_day_of_death';
+      setFieldValue(hebrew_year_of_death, y);
+      console.log('hebrew_year_of_death: ', hebrew_year_of_death);
+      setFieldValue(hebrew_month_of_death, m);
+      console.log('hebrew_month_of_death: ', hebrew_month_of_death);
+      setFieldValue(hebrew_day_of_death, d);
+      console.log('hebrew_day_of_death: ', hebrew_day_of_death);
     }
-  }, [selectedRawDate, hebrewDates]); // Ensure this only runs when selectedRawDate or hebrewDates change
+  };
+
+  const onChangeHandler = (
+    date: Date,
+    setFieldValue: FormikHelpers<any>['setFieldValue']
+  ) => {
+    setSelectedRawDate(date);
+    const formattedDate = formatDate(date);
+    setFieldValue(name, formattedDate);
+    if (date) {
+      const hebrewDateParts = fetchHebrewDateParts(date);
+      if (hebrewDateParts) {
+        parseAndsetHebrewDates(hebrewDateParts, setFieldValue);
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   if (selectedRawDate) {
+  //     const hebrewDateParts = fetchHebrewDateParts(selectedRawDate);
+  //     if (hebrewDateParts) {
+  //       parseAndsetHebrewDates(hebrewDateParts, setFieldValue);
+  //     }
+  //     // onChange(hebrewDateParts);
+  //   }
+  // }, [selectedRawDate, hebrewDates]);
 
   const monthViewChanged = (e: CalendarViewChangeEvent) => {
     setMonthViewDate(e.value as Date);
@@ -108,22 +167,43 @@ const HebrewCalendar: React.FC<HebrewCalendarProps> = ({ value, onChange }) => {
       </div>
     );
   };
+  const { t } = useTranslation();
 
   return (
-    <Calendar
-      inputId='hebrewDate'
-      value={selectedRawDate ? new Date(selectedRawDate) : null}
-      onChange={e => setSelectedRawDate(e.value as Date)}
-      viewDate={monthViewDate}
-      onViewDateChange={monthViewChanged}
-      dateTemplate={dateTemplate}
-      locale='he'
-      showIcon
-      className='w-full'
-      icon={() => <i className='pi pi-calendar text-white'></i>}
-      pt={{ day: { className: 'cal-day' } }}
-      formatDateTime={formatHebDate}
-    />
+    <Field className='flex-1' name={name}>
+      {({ form }: FieldProps<string>) => (
+        <div className='w-full'>
+          <label className='block mb-1 font-semibold' htmlFor='hebrewDate'>
+            {t(label)}
+          </label>
+          <Calendar
+            inputId='hebrewDate'
+            value={selectedRawDate ? new Date(selectedRawDate) : null}
+            onChange={e => {
+              onChangeHandler(e.value as Date, form.setFieldValue);
+            }}
+            viewDate={monthViewDate}
+            onViewDateChange={monthViewChanged}
+            dateTemplate={dateTemplate}
+            locale='he'
+            showIcon
+            className='w-full'
+            icon={() => <i className='pi pi-calendar text-white'></i>}
+            pt={{ day: { className: 'cal-day' } }}
+            formatDateTime={formatHebDate}
+          />
+          {validationProp ? (
+            <div>
+              <ErrorMessage
+                name={validationProp}
+                component='div'
+                className='p-error loading-none'
+              />
+            </div>
+          ) : null}
+        </div>
+      )}
+    </Field>
   );
 };
 

@@ -1,18 +1,32 @@
-import { CemeteryInterface } from '@type//cemeteries.ts';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
+import { CemeteryInterface } from '@type/cemeteriesInterface';
 import api from '@api/apiService.ts';
+import useMaybeExcludeAddress from '@utils/useMaybeExcludeAddress';
+
+type CemeteryServerInterface = {
+  cemetery: CemeteryInterface;
+};
 
 export async function fetchCemeteries() {
   try {
-    const response = await api.get('cemeteries'); // Adjust the endpoint as needed
+    const response = await api.get('cemeteries?include_all'); // Adjust the endpoint as needed
+
     return response.data;
   } catch (error) {
     throw error;
   }
 }
+export async function fetchCemetery(id: number, withAddress: boolean = false) {
+  try {
+    const response = await api.get(
+      `cemeteries/${id}${withAddress ? '?include_address=true' : ''}`
+    ); // Adjust the endpoint as needed
 
-type CemeteryServerInterface = {
-  cemetery: CemeteryInterface;
-};
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function saveCemetery(data: CemeteryServerInterface) {
   const {
@@ -21,6 +35,9 @@ export async function saveCemetery(data: CemeteryServerInterface) {
   try {
     const method = id ? 'put' : 'post';
     const url = `cemeteries${id ? `/${id}` : ''}`;
+
+    data.cemetery = useMaybeExcludeAddress(data.cemetery);
+
     const response = await api[method](url, data);
     return response.data;
   } catch (error) {

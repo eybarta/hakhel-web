@@ -1,4 +1,30 @@
-import { DeceasedPersonInterface } from '@type/deceased';
+import { AddressInterface } from '@type/addressInterface';
+import { CemeteryInterface } from '../types/cemeteriesInterface';
+import { DeceasedPersonInterface } from '@type/deceasedInterface';
+import { ContactInterface } from '@type/contactsInterface';
+import {
+  RelationToContactClientInterface,
+  RelationToDeceasedClientInterface,
+} from '@type/relationshipsInterface';
+
+export const defaultAddressValues: AddressInterface = {
+  line1: '',
+  line2: '',
+  city: '',
+  country: '',
+  postal_code: '',
+};
+
+export const defaultContactValues: ContactInterface = {
+  id: null,
+  first_name: '',
+  last_name: '',
+  gender: '',
+  email: '',
+  phone: '',
+  address_attributes: defaultAddressValues,
+  relations_attributes: [],
+};
 
 export const defaultDeceasedValues: DeceasedPersonInterface = {
   id: null,
@@ -14,4 +40,22 @@ export const defaultDeceasedValues: DeceasedPersonInterface = {
   cemetery_id: null,
   cemetery_region: '',
   cemetery_parcel: '',
+  relations_attributes: [],
+};
+
+export const defaultCemeteryValues: CemeteryInterface = {
+  id: null,
+  name: '',
+  description: '',
+  address_attributes: defaultAddressValues,
+};
+
+export const defaultRelationToContact: RelationToContactClientInterface = {
+  relation_of_deceased_to_contact: '',
+  contact_person_attributes: defaultContactValues,
+};
+
+export const defaultRelationToDeceased: RelationToDeceasedClientInterface = {
+  relation_of_deceased_to_contact: '',
+  deceased_person_attributes: defaultDeceasedValues,
 };

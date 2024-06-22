@@ -28,10 +28,10 @@ import { FilterMatchMode } from 'primereact/api';
 import FormEditCemetery from '@components/forms/FormEditCemetery';
 import RowActions from '@components/table/RowActions';
 import DataTableWrapper from '@components/table/DataTableWrapper';
-import ManageCemeteriesTableHeader from '@components/table/templates/ManageCemeteriesTableHeader';
 
 // Types
-import type { CemeteryInterface } from '@type/cemeteries';
+import type { CemeteryInterface } from '@type/cemeteriesInterface';
+import ManageTableHeader from '@components/table/templates/ManageTableHeader';
 
 const ManageCemeteries = () => {
   const { t } = useTranslation();
@@ -93,8 +93,10 @@ const ManageCemeteries = () => {
         confirmPopup({
           target: e.currentTarget,
           message: 'למחוק את הבית עלמין הזה?',
-          icon: 'pi pi-exclamation-triangle',
+          icon: 'pi pi-exclamation-triangle text-yellow-800',
           defaultFocus: 'accept',
+          acceptLabel: t('yes'),
+          rejectLabel: t('no'),
           accept: async () => await confirmDelete(snapshot, release, id),
           reject: () => console.log('Rejected'),
         });
@@ -120,12 +122,34 @@ const ManageCemeteries = () => {
   // UI Renderers
   const tableHeaderTemplate = () => {
     return (
-      <ManageCemeteriesTableHeader
+      <ManageTableHeader
         onSearch={onGlobalFilterChange}
         onAdd={() => editCemetery(null)}
+        addLabel='add cemetery'
+        title='cemeteries information'
       />
     );
   };
+
+  const rowExpansionTemplate = (data: CemeteryInterface) => {
+    console.log('data.address: ', data.address);
+    if (data.address) {
+      const {
+        address: { line1, city, postal_code },
+      } = data;
+      return (
+        <div className='p-3'>
+          <h5 className='font-semibold mb-2'>{t('cemetery address')}</h5>
+          <p>{line1}</p>
+          <p>
+            {city}, {postal_code}
+          </p>
+        </div>
+      );
+    }
+    return <h5 className='font-semibold mb-2'>{t('no address')}</h5>;
+  };
+
   const columns = [
     {
       body: (data: CemeteryInterface) => (
@@ -139,19 +163,19 @@ const ManageCemeteries = () => {
     {
       sortable: true,
       field: 'name',
-      header: t('Name'),
+      header: t('name'),
     },
     {
       sortable: true,
       field: 'description',
-      header: t('Description'),
+      header: t('description'),
     },
   ];
   const fieldsToFilter = ['name', 'description'];
 
   return (
     <div className='app-page h-screen w-screen'>
-      <Card pt={{ content: { clasName: 'p-0' } }} className='mt-3'>
+      <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
         <DataTableWrapper
           data={cemeteries}
           loading={cemeteriesLoadable.state === 'loading'}
@@ -159,6 +183,9 @@ const ManageCemeteries = () => {
           filters={filters}
           fieldsToFilter={fieldsToFilter}
           headerTemplate={tableHeaderTemplate()}
+          withExpand={true}
+          expanderProp='address'
+          rowExpansionTemplate={rowExpansionTemplate}
         />
       </Card>
     </div>

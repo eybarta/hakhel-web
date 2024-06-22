@@ -17,7 +17,7 @@ const SearchField = ({ onChange }: SearchFieldProps) => {
       <InputText
         data-testid='search-input'
         onChange={onChange}
-        placeholder={t('Search')}
+        placeholder={t('search')}
       />
     </IconField>
   );

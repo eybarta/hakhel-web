@@ -1,9 +1,13 @@
-import { DeceasedPersonInterface } from '@type/deceased.ts';
+import {
+  DeceasedPersonInterface,
+  DeceasedPersonServerInterface,
+} from '@type/deceasedInterface';
 import api from '@api/apiService.ts';
 
-export async function fetchDeceasedPeople() {
+export async function fetchAllDeceased() {
   try {
-    const response = await api.get('deceased_people'); // Adjust the endpoint as needed
+    const response = await api.get('deceased_people?include_all'); // Adjust the endpoint as needed
+    console.log('DECEASED response: ', response);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -11,11 +15,9 @@ export async function fetchDeceasedPeople() {
   }
 }
 
-type DeceasedPersonServerInterface = {
-  deceased_person: DeceasedPersonInterface;
-};
-
-export async function saveDeceasedPerson(data: DeceasedPersonServerInterface) {
+export async function saveDeceased(
+  data: DeceasedPersonServerInterface
+): Promise<DeceasedPersonInterface> {
   const {
     deceased_person: { id },
   } = data;
@@ -30,7 +32,7 @@ export async function saveDeceasedPerson(data: DeceasedPersonServerInterface) {
   }
 }
 
-export async function deleteDeceasedPerson(id: number) {
+export async function deleteDeceased(id: number) {
   try {
     const response = await api.delete(`deceased_people/${id}`);
     console.log('DELETE response: ', response);

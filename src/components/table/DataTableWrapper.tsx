@@ -1,9 +1,10 @@
 // components/DataTableWrapper.tsx
-import React, { ReactNode } from 'react';
-import { DataTable } from 'primereact/datatable';
+import React, { ReactNode, useState } from 'react';
+import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { Column, ColumnProps } from 'primereact/column';
 import type { FilterMatchMode } from 'primereact/api';
 import { useTranslation } from 'react-i18next';
+import useExpanderColumn from './hooks/useExpanderColumn';
 
 interface DataTableWrapperProps<T> {
   data: T[];
@@ -13,8 +14,10 @@ interface DataTableWrapperProps<T> {
   filters: { [key: string]: { value: string; matchMode: FilterMatchMode } };
   headerTemplate: ReactNode;
   emptyMessage?: string;
+  withExpand?: boolean;
+  expanderProp?: string;
+  rowExpansionTemplate?: (data: T) => ReactNode;
 }
-
 const DataTableWrapper = <T extends object>({
   data,
   loading,
@@ -23,15 +26,22 @@ const DataTableWrapper = <T extends object>({
   fieldsToFilter,
   headerTemplate,
   emptyMessage,
+  withExpand = false,
+  expanderProp,
+  rowExpansionTemplate,
 }: DataTableWrapperProps<T>): JSX.Element => {
   const { t } = useTranslation();
+  const [expandedRows, setExpandedRows] = useState<
+    DataTableExpandedRows | undefined
+  >(undefined);
+  const expanderColumn = useExpanderColumn(expanderProp);
 
   return (
     <DataTable
       value={data}
       header={headerTemplate}
       loading={loading}
-      emptyMessage={emptyMessage || t('No data available')}
+      emptyMessage={emptyMessage || t('no data available')}
       globalFilterFields={fieldsToFilter || []}
       filters={filters}
       stripedRows
@@ -45,7 +55,14 @@ const DataTableWrapper = <T extends object>({
         tbody: { role: 'tbody' },
       }}
       rowClassName={() => 'data-table-row'}
+      rowExpansionTemplate={rowExpansionTemplate}
+      expandedRows={expandedRows}
+      onRowToggle={e => {
+        console.log(e);
+        setExpandedRows(e.data as DataTableExpandedRows);
+      }}
     >
+      {withExpand && <Column {...expanderColumn} />}
       {columns.map((col, index) => (
         <Column
           pt={{

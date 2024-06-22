@@ -1,69 +1,38 @@
 // i18n.js
-import i18n from 'i18next';
+import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import commonHE from '/src/locales/he/common.json';
+import validationHE from './locales/he/validation.json';
+import relationsHE from './locales/he/relations.json';
 
-i18n
+const resources = {
+  en: {
+    translation: {
+      welcome_message: 'Welcome to React',
+    },
+  },
+  he: {
+    common: commonHE,
+    validation: validationHE,
+    relations: relationsHE,
+  },
+};
+
+i18next
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
-    resources: {
-      en: {
-        translation: {
-          welcome_message: 'Welcome to React',
-        },
-      },
-      he: {
-        translation: {
-          'Sign in': 'כניסה',
-          Email: 'אימייל',
-          Password: 'סיסמה',
-          'First name': 'שם פרטי',
-          'Last name': 'שם משפחה',
-          'Select gender': 'מין',
-          'Select cemetery': 'מקום קבורה',
-          Male: 'זכר',
-          Female: 'נקבה',
-          male: 'זכר',
-          female: 'נקבה',
-          'Date of Birth': 'תאריך לידה',
-          'Date of Death': 'תאריך פטירה',
-          Save: 'שמור',
-          'First name is required': 'שם פרטי זה שדה חובה',
-          'Last name is required': 'שם משפחה זה שדה חובה',
-          'Gender is required': 'מין זה שדה חובה',
-          'Hebrew date of death is required': 'תאריך פטירה בעברית זה שדה חובה',
-          Edit: 'עריכת',
-          Add: 'הוספת',
-          'deceased person': 'נפטר',
-          'Deceased people': 'פרטי נפטרים',
-          'Add deceased person': 'הוספת נפטר',
-          'Add cemetery': 'הוספת בית עלמין',
-          Cemeteries: 'בתי עלמין',
-          cemetery: 'מקום קבורה',
-          'Cemetery information': 'פרטי קבורה',
-          'Cemeteries information': 'פרטי בתי עלמין',
-          'Deceased information': 'פרטי נפטר',
-          'Cemetery parcel': 'מספר חלקה',
-          'Cemetery region': 'מספר גוש',
-
-          'No data available': 'אין נתונים',
-          Search: 'חיפוש',
-          Name: 'שם',
-          Description: 'תיאור',
-        },
-      },
-    },
+    resources,
     lng: 'he', // default language
     fallbackLng: 'he', // default language to use
-    returnObjects: true,
-    keySeparator: false, // setting keySeparator to false means that dots in keys are not treated as path separators
+    ns: ['common', 'validation', 'relations'],
+    defaultNS: 'common', // Set the default namespace to 'common'
+    returnObjects: false,
     react: {
       useSuspense: false,
     },
     debug: false, // toggle this to see logs for debugging
-    saveMissing: true, // saves new keys to the translation file (useful during development)
-    missingKeyHandler: key => {
-      return key; // This ensures that the key itself is returned if the translation is missing
+    parseMissingKeyHandler(key) {
+      return key;
     },
   });
-
-export default i18n;
+export default i18next;

@@ -4,6 +4,15 @@ import { classNames } from 'primereact/utils';
 export default function TopBar() {
   const items = [
     {
+      template: () => {
+        return (
+          <span className='mr-4 flex'>
+            <img className='h-8' src='/src/assets/hakhel-logo-2.svg' alt='' />
+          </span>
+        );
+      },
+    },
+    {
       label: 'עמוד הבית',
       icon: 'pi pi-home',
       url: '/',
@@ -56,6 +65,8 @@ export default function TopBar() {
     {
       label: 'אנשי קשר',
       icon: 'pi pi-user',
+      url: '/contacts',
+      className: location.pathname === '/contacts' ? 'active' : '', //location.pathname === '/deceased' ? 'bg-info-800' : ''
     },
   ];
   const end = (
