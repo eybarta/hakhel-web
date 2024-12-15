@@ -11,12 +11,20 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
+  "resolutions": {
+    "jsdom": "^24.1.0"
+  },
+  "overrides": {
+    "jsdom": "^24.1.0"
+  },
   "dependencies": {
     "@types/lodash": "^4.17.5",
+    "@eslint-community/regexpp": "^4.10.1",
     "axios": "^1.7.2",
     "formik": "^2.4.6",
     "i18next": "^23.11.5",
     "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
@@ -60,5 +68,10 @@
     "ts-jest": "^29.1.5",
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "braces@<3.0.3": ">=3.0.3"
+    }
   }
 }

@@ -51,6 +51,8 @@ const DataTableWrapper = <T extends object>({
       tableStyle={{ minWidth: '50rem' }}
       pt={{
         loadingOverlay: { className: 'bg-gray-100/50' },
+        bodyRow: { role: 'row' },
+        tbody: { role: 'tbody' },
       }}
       rowClassName={() => 'data-table-row'}
       rowExpansionTemplate={rowExpansionTemplate}
@@ -62,7 +64,13 @@ const DataTableWrapper = <T extends object>({
     >
       {withExpand && <Column {...expanderColumn} />}
       {columns.map((col, index) => (
-        <Column key={index} {...col} />
+        <Column
+          pt={{
+            bodyCell: { role: 'cell' },
+          }}
+          key={index}
+          {...col}
+        />
       ))}
     </DataTable>
   );

@@ -17,6 +17,7 @@ export default defineConfig({
       '@type': path.resolve(__dirname, 'src/types'),
       '@constants': path.resolve(__dirname, 'src/constants'),
       '@validations': path.resolve(__dirname, 'src/validations'),
+      '@mocks': path.resolve(__dirname, 'src/__mocks__'),
     },
   },
 });
