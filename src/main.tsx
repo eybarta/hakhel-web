@@ -5,6 +5,8 @@ import { twMerge } from 'tailwind-merge';
 import { RecoilRoot } from 'recoil';
 
 import he from './locales/prime-he.json';
+import { primeTheme } from './theme/prime-theme';
+import './theme/global.css';
 import './base.css';
 import './index.css';
 import './i18n';
@@ -22,6 +24,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <PrimeReactProvider
     value={{
+      pt: primeTheme,
       ptOptions: {
         mergeSections: true,
         mergeProps: true,
