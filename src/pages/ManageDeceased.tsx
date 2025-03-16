@@ -12,10 +12,8 @@ import { useDialog } from '@components/context/DialogContext';
 
 // State (Recoil)
 import {
-  useRecoilValueLoadable,
   useRecoilCallback,
   useRecoilRefresher_UNSTABLE,
-  useRecoilState,
   Snapshot,
 } from 'recoil';
 
@@ -26,6 +24,9 @@ import {
   deceasedAtom,
   cemeteriesAtom,
 } from '@services/state';
+
+// Custom Hooks
+import { useRecoilLoader } from '@hooks/useRecoilLoader';
 
 // Utils
 import useFindCemetery from '@utils/useFindCemetery';
@@ -49,25 +50,18 @@ const ManageDeceased = () => {
   const { showToast } = useToast();
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
-  const [deceasedPeople, setDeceasedPeople] = useRecoilState(deceasedAtom);
+  
+  const { data: deceasedPeople, isLoading: isDeceasedLoading } = useRecoilLoader(
+    deceasedAtom,
+    deceasedDataSelector
+  );
+  
+  const { data: cemeteries } = useRecoilLoader(
+    cemeteriesAtom,
+    cemeteriesDataSelector
+  );
 
-  const [cemeteries, setCemeteries] = useRecoilState(cemeteriesAtom);
-  const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
-  const deceasedLoadable = useRecoilValueLoadable(deceasedDataSelector);
   const refreshDeceased = useRecoilRefresher_UNSTABLE(deceasedDataSelector);
-
-  // Load data
-  useEffect(() => {
-    if (deceasedLoadable.state === 'hasValue') {
-      setDeceasedPeople(deceasedLoadable.contents);
-    }
-  }, [deceasedLoadable.state, deceasedLoadable.contents, setDeceasedPeople]);
-  useEffect(() => {
-    if (cemeteriesLoadable.state === 'hasValue') {
-      setCemeteries(cemeteriesLoadable.contents);
-    }
-  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
-  /////////////
 
   const confirmDelete = async (
     snapshot: Snapshot,
@@ -149,25 +143,6 @@ const ManageDeceased = () => {
 
   const findCemetery = useFindCemetery(cemeteries);
 
-  // const editContact = (contact: ContactInterface) => {
-  //   console.log('editContact: ', contact);
-  // };
-  // const contactCardFooter = (contact: ContactInterface) => {
-  //   console.log('contact: ', contact);
-  //   return (
-  //     <div className='w-full flex flex-row-reverse'>
-  //       <Button
-  //         icon='pi pi-pencil'
-  //         rounded
-  //         text
-  //         size='small'
-  //         severity='secondary'
-  //         aria-label='Edit Contact'
-  //         onClick={() => editContact(contact)}
-  //       />
-  //     </div>
-  //   );
-  // };
   const rowExpansionTemplate = (data: DeceasedPersonInterface) => {
     console.log('data.relations: ', data.relations);
     const { relations } = data;
@@ -189,7 +164,6 @@ const ManageDeceased = () => {
                     ns: 'relations',
                   }
                 )}`}
-                // footer={() => contactCardFooter(contact_person)}
                 className='md:w-25rem'
               >
                 <div>
@@ -206,7 +180,6 @@ const ManageDeceased = () => {
                     </p>
                   )}
                 </div>
-                {/* <p className='m-0'>{JSON.stringify(relation)}</p> */}
               </Card>
             );
           })}
@@ -275,7 +248,7 @@ const ManageDeceased = () => {
       <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
         <DataTableWrapper
           data={deceasedPeople}
-          loading={deceasedLoadable.state === 'loading'}
+          loading={isDeceasedLoading}
           columns={columns}
           filters={filters}
           fieldsToFilter={fieldsToFilter}

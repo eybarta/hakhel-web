@@ -3,7 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/**/*.{js,jsx,ts,tsx}",
-    "./src/themes/*.{css}",
+    "./src/themes/*.css",
 		"./node_modules/primereact/**/*.{js,ts,jsx,tsx}", // Add this line
 
   ],

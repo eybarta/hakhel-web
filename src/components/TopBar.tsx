@@ -17,7 +17,7 @@ export default function TopBar() {
       icon: 'pi pi-home',
       url: '/',
       className: location.pathname === '/' ? 'active' : '', //location.pathname === '/deceased' ? 'bg-info-800' : ''
-    },
+    },  
     {
       label: 'נפטרים',
       icon: 'pi pi-book',
@@ -67,6 +67,12 @@ export default function TopBar() {
       icon: 'pi pi-user',
       url: '/contacts',
       className: location.pathname === '/contacts' ? 'active' : '', //location.pathname === '/deceased' ? 'bg-info-800' : ''
+    },
+    {
+      label: 'תקשורת',
+      icon: 'pi pi-envelope',
+      url: '/communications',
+      className: location.pathname === '/communications' ? 'active' : '', 
     },
   ];
   const end = (

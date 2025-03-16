@@ -9,10 +9,8 @@ import { useConfirm } from '@components/context/ConfirmContext';
 
 // State (Recoil)
 import {
-  useRecoilValueLoadable,
   useRecoilCallback,
   useRecoilRefresher_UNSTABLE,
-  useRecoilState,
   Snapshot,
 } from 'recoil';
 import {
@@ -20,6 +18,9 @@ import {
   cemeteriesDataSelector,
   deleteCemeterySelector,
 } from '@services/state';
+
+// Custom Hooks
+import { useRecoilLoader } from '@hooks/useRecoilLoader';
 
 // PrimeReact UI components
 import { Card } from 'primereact/card';
@@ -39,8 +40,11 @@ const ManageCemeteries = () => {
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
 
-  const [cemeteries, setCemeteries] = useRecoilState(cemeteriesAtom);
-  const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
+  const { data: cemeteries, isLoading: isCemeteriesLoading } = useRecoilLoader(
+    cemeteriesAtom,
+    cemeteriesDataSelector
+  );
+
   const refreshCemeteries = useRecoilRefresher_UNSTABLE(cemeteriesDataSelector);
   const [filters, setFilters] = useState({
     global: { value: '', matchMode: FilterMatchMode.CONTAINS },
@@ -51,16 +55,6 @@ const ManageCemeteries = () => {
       ...filters,
       global: { ...filters.global, value: e.target.value },
     });
-
-  // Load data
-  useEffect(() => {
-    console.log('cemeteriesLoadable.state: ', cemeteriesLoadable.state);
-    console.log('cemeteriesLoadable: ', cemeteriesLoadable);
-    if (cemeteriesLoadable.state === 'hasValue') {
-      setCemeteries(cemeteriesLoadable.contents);
-    }
-  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
-  /////////////
 
   // Methods
   const confirmDelete = async (
@@ -178,7 +172,7 @@ const ManageCemeteries = () => {
       <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
         <DataTableWrapper
           data={cemeteries}
-          loading={cemeteriesLoadable.state === 'loading'}
+          loading={isCemeteriesLoading}
           columns={columns}
           filters={filters}
           fieldsToFilter={fieldsToFilter}

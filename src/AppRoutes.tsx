@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound';
 import ManageDeceased from './pages/ManageDeceased';
 import ManageCemeteries from './pages/ManageCemeteries';
 import ManageContacts from './pages/ManageContacts';
-
+import ManageMessages from './pages/ManageMessages';
 const Home = React.lazy(() => import('./pages/Home'));
 const isAuthenticated = hasToken();
 
@@ -31,6 +31,7 @@ const AppRoutes = () => {
           <Route path='/deceased' element={<ManageDeceased />} />
           <Route path='/cemeteries' element={<ManageCemeteries />} />
           <Route path='/contacts' element={<ManageContacts />} />
+          <Route path='/communications' element={<ManageMessages />} />
           <Route path='*' element={<NotFound />} />
         </Route>
         <Route path='/login' element={<Login />} />

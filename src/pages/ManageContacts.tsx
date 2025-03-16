@@ -9,10 +9,8 @@ import { useDialog } from '@components/context/DialogContext';
 
 // State (Recoil)
 import {
-  useRecoilValueLoadable,
   useRecoilCallback,
   useRecoilRefresher_UNSTABLE,
-  useRecoilState,
   Snapshot,
 } from 'recoil';
 
@@ -25,6 +23,9 @@ import {
   contactsAtom,
   deleteContactsSelector,
 } from '@services/state';
+
+// Custom Hooks
+import { useRecoilLoader } from '@hooks/useRecoilLoader';
 
 // Utils
 import useFindCemetery from '@utils/useFindCemetery';
@@ -42,38 +43,28 @@ import { ContactInterface } from '@type/contactsInterface';
 import { RelationToDeceasedServerInterface } from '@type/relationshipsInterface';
 import ManageTableHeader from '@components/table/templates/ManageTableHeader';
 
-const ManageDeceased = () => {
+const ManageContacts = () => {
   const { t } = useTranslation();
   const { showToast } = useToast();
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
-  const [deceasedPeople, setDeceasedPeople] = useRecoilState(deceasedAtom);
-  const [contacts, setContacts] = useRecoilState(contactsAtom);
 
-  const [cemeteries, setCemeteries] = useRecoilState(cemeteriesAtom);
-  const cemeteriesLoadable = useRecoilValueLoadable(cemeteriesDataSelector);
-  const deceasedLoadable = useRecoilValueLoadable(deceasedDataSelector);
-  const contactsLoadable = useRecoilValueLoadable(contactsDataSelector);
-  const refreshDeceased = useRecoilRefresher_UNSTABLE(deceasedDataSelector);
+  const { data: contacts, isLoading: isContactsLoading } = useRecoilLoader(
+    contactsAtom,
+    contactsDataSelector
+  );
+
+  const { data: deceasedPeople } = useRecoilLoader(
+    deceasedAtom,
+    deceasedDataSelector
+  );
+
+  const { data: cemeteries } = useRecoilLoader(
+    cemeteriesAtom,
+    cemeteriesDataSelector
+  );
+
   const refreshContacts = useRecoilRefresher_UNSTABLE(contactsDataSelector);
-
-  // Load data
-  useEffect(() => {
-    if (deceasedLoadable.state === 'hasValue') {
-      setDeceasedPeople(deceasedLoadable.contents);
-    }
-  }, [deceasedLoadable.state, deceasedLoadable.contents, setDeceasedPeople]);
-  useEffect(() => {
-    if (contactsLoadable.state === 'hasValue') {
-      setContacts(contactsLoadable.contents);
-    }
-  }, [contactsLoadable.state, contactsLoadable.contents, setContacts]);
-  useEffect(() => {
-    if (cemeteriesLoadable.state === 'hasValue') {
-      setCemeteries(cemeteriesLoadable.contents);
-    }
-  }, [cemeteriesLoadable.state, cemeteriesLoadable.contents, setCemeteries]);
-  /////////////
 
   const confirmDelete = async (
     snapshot: Snapshot,
@@ -116,7 +107,6 @@ const ManageDeceased = () => {
   const editContact = (data: ContactInterface | null) => {
     showDialog(
       <FormEditContact
-        isStandalone={true}
         propValues={data}
         closeDialog={hideDialog}
         submit={onSubmit}
@@ -245,7 +235,7 @@ const ManageDeceased = () => {
       <Card pt={{ content: { className: 'p-0' } }} className='mt-3'>
         <DataTableWrapper
           data={contacts}
-          loading={contactsLoadable.state === 'loading'}
+          loading={isContactsLoading}
           columns={columns}
           filters={filters}
           fieldsToFilter={fieldsToFilter}
@@ -258,4 +248,4 @@ const ManageDeceased = () => {
     </div>
   );
 };
-export default ManageDeceased;
+export default ManageContacts;

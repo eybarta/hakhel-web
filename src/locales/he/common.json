@@ -65,5 +65,17 @@
   "contact information": "פרטי התקשרות",
   "related deceased": "קשר לנפטרים",
   "no_deceased_available": "אין נפטרים",
-  "deleted_on_save": "ימחק לאחר שמירה"
+  "deleted_on_save": "ימחק לאחר שמירה",
+  "messages": "הודעות",
+  "add message": "הוספת הודעה",
+  "edit message": "עריכת הודעה",
+  "message": "הודעה",
+  "delivery method": "אמצעי משלוח",
+  "send date": "תאריך שליחה",
+  "created at": "נוצר בתאריך",
+  "message deleted successfully": "ההודעה נמחקה בהצלחה",
+  "message updated successfully": "ההודעה עודכנה בהצלחה",
+  "are you sure you want to delete this message?": "האם למחוק את ההודעה?",
+  "an error occurred, please try again": "ארעה שגיאה, בבקשה נסו שוב",
+  "message content": "תוכן ההודעה"
 }
