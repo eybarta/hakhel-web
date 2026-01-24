@@ -1,36 +1,39 @@
 import React from 'react';
-import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
-import TableHeader from '../TableHeader';
+import { Button } from 'primereact/button';
+import SearchField from '../../fields/SearchField';
 
 interface ManageTableHeaderProps {
   onSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onAdd: () => void;
-  addLabel: string;
-  title: string;
+  onAdd?: () => void;
+  addLabel?: string;
+  title?: string;
 }
 
 const ManageTableHeader: React.FC<ManageTableHeaderProps> = ({
   onSearch,
   onAdd,
-  addLabel,
-  title,
+  addLabel = 'add',
+  title = '',
 }) => {
   const { t } = useTranslation();
 
   return (
-    <TableHeader title={t(title)} onSearch={onSearch}>
-      <Button
-        icon='pi pi-plus'
-        severity='info'
-        raised
-        outlined
-        size='small'
-        label={t(addLabel)}
-        className='mr-2'
-        onClick={onAdd}
-      />
-    </TableHeader>
+    <div className='flex justify-between items-center gap-2 p-3'>
+      <div className='flex items-center gap-2'>
+        
+        {title && <h2 className='text-2xl font-bold'>{t(title)}</h2>}
+        {onAdd && (
+          <Button
+            type='button'
+            icon='pi pi-plus'
+            label={t(addLabel)}
+            onClick={onAdd}
+          />
+        )}
+      </div>
+      <SearchField onChange={onSearch} />
+    </div>
   );
 };
 

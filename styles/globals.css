@@ -1,0 +1,17 @@
+/* Override dark theme styles */
+@media (prefers-color-scheme: dark) {
+  .dark\:text-neutral-300 {
+    --tw-text-opacity: 1;
+    color: inherit;
+  }
+  
+  /* If you need to override background colors as well */
+  form {
+    background-color: transparent;
+  }
+  
+  input, textarea {
+    background-color: white;
+    color: inherit;
+  }
+} 

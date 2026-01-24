@@ -12,7 +12,7 @@ const SearchField = ({ onChange }: SearchFieldProps) => {
   const { t } = useTranslation();
 
   return (
-    <IconField size={1} iconPosition='right'>
+    <IconField  iconPosition='left'>
       <InputIcon className='pi pi-search'> </InputIcon>
       <InputText
         data-testid='search-input'

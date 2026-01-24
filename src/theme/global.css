@@ -1,10 +1,138 @@
 /* DataTable Styles */
-.p-datatable .p-datatable-tbody > tr {
+.p-datatable {
+  background: rgb(var(--surface-0));
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: rgb(var(--surface-50));
+  color: rgb(var(--surface-600));
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 1px solid rgb(var(--surface-200));
   transition: background-color 0.2s;
 }
 
+/* Base row styles */
+.p-datatable .p-datatable-tbody > tr {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 1px solid rgb(var(--surface-100));
+  transform-origin: top;
+  opacity: 1;
+  max-height: 500px; /* Increased to accommodate expanded content */
+}
+
+/* Row hover effect */
 .p-datatable .p-datatable-tbody > tr:hover {
   background-color: rgb(var(--surface-50));
+}
+
+/* Row expansion/collapse */
+.p-datatable .p-datatable-tbody > tr {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-row-expanded {
+  background-color: rgb(var(--surface-50) / 0.5);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-row-expanded > td {
+  border-bottom: none;
+}
+
+/* Row expansion content */
+.p-rowexpansion-content {
+  background-color: rgb(var(--surface-50) / 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0;
+}
+
+.p-rowexpansion-content.p-rowexpansion-content-enter-active,
+.p-rowexpansion-content.p-rowexpansion-content-enter-done {
+  opacity: 1;
+  max-height: 1000px;
+}
+
+.p-rowexpansion-content.p-rowexpansion-content-exit {
+  opacity: 1;
+  max-height: 1000px;
+}
+
+.p-rowexpansion-content.p-rowexpansion-content-exit-active {
+  opacity: 0;
+  max-height: 0;
+}
+
+/* Custom chevron icon and animation */
+.p-datatable .p-row-toggler {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  color: rgb(var(--surface-600));
+  background: transparent;
+}
+
+.p-datatable .p-row-toggler:hover {
+  background-color: rgb(var(--surface-100));
+}
+
+.p-datatable .p-row-toggler::before {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p-datatable .p-row-toggler.p-row-toggler-expanded::before {
+  transform: rotate(45deg);
+}
+
+/* Row enter/exit animations */
+.p-datatable .p-datatable-tbody > tr {
+  animation: tableRowFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p-datatable .p-datatable-tbody > tr.row-exit {
+  animation: tableRowFadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes tableRowFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes tableRowFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    max-height: 500px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0);
+    max-height: 0;
+  }
 }
 
 /* Card Styles */
@@ -30,4 +158,50 @@
 
 .p-button:focus {
   box-shadow: 0 0 0 2px rgb(var(--surface-0)), 0 0 0 4px rgb(var(--primary-200));
+}
+
+/* Zebra striping for better readability */
+.p-datatable .p-datatable-tbody > tr:nth-child(even):not(.p-row-expanded) {
+  background-color: rgb(var(--surface-50) / 0.3);
+}
+
+/* Menubar Styles */
+.p-menubar {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+}
+
+.p-menubar .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.p-menubar .p-menuitem-link:not(.p-disabled):hover {
+  background-color: rgb(var(--surface-100));
+}
+
+.p-menubar .p-menuitem-link.active {
+  background-color: rgb(var(--surface-200));
+}
+
+.p-menubar .p-menuitem-icon {
+  margin-right: 0.5rem;
 } 
+
+
+body .ltr {
+  direction: ltr;
+}
+
+/* Text Selection Styles */
+::selection {
+  background-color: rgb(var(--primary-100) / 0.4);
+  color: rgb(var(--surface-900));
+}
+
+::-moz-selection {
+  background-color: rgb(var(--primary-100) / 0.4);
+  color: rgb(var(--surface-900));
+}

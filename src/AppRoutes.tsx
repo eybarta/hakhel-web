@@ -31,7 +31,7 @@ const AppRoutes = () => {
           <Route path='/deceased' element={<ManageDeceased />} />
           <Route path='/cemeteries' element={<ManageCemeteries />} />
           <Route path='/contacts' element={<ManageContacts />} />
-          <Route path='/communications' element={<ManageMessages />} />
+          <Route path='/messages' element={<ManageMessages />} />
           <Route path='*' element={<NotFound />} />
         </Route>
         <Route path='/login' element={<Login />} />

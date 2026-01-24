@@ -14,6 +14,7 @@
   "dependencies": {
     "@types/lodash": "^4.17.5",
     "axios": "^1.7.2",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "i18next": "^23.11.5",
     "jest-environment-jsdom": "^29.7.0",
