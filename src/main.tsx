@@ -2,7 +2,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { PrimeReactProvider, locale, addLocale } from 'primereact/api';
 import { twMerge } from 'tailwind-merge';
-import { RecoilRoot } from 'recoil';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { persistOptions, queryClient } from './query/queryClient';
 
 import he from './locales/prime-he.json';
 import { primeTheme } from './theme/prime-theme';
@@ -21,6 +23,19 @@ locale('he');
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 // Rendering the application within the PrimeReactProvider
+const app = persistOptions ? (
+  <PersistQueryClientProvider
+    client={queryClient}
+    persistOptions={persistOptions}
+  >
+    <App />
+  </PersistQueryClientProvider>
+) : (
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+);
+
 root.render(
   <PrimeReactProvider
     value={{
@@ -32,8 +47,6 @@ root.render(
       },
     }}
   >
-    <RecoilRoot>
-      <App />
-    </RecoilRoot>
+    {app}
   </PrimeReactProvider>
 );

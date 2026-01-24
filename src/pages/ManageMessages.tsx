@@ -10,19 +10,15 @@ import { useToast } from '../components/context/ToastContext';
 import { useConfirm } from '../components/context/ConfirmContext';
 import { useDialog } from '../components/context/DialogContext';
 
-// State (Recoil)
-import { messagesAtom, sentMessagesAtom } from '../services/state/atoms/messagesAtoms';
+// State (Query)
+import { useQueryClient } from '@tanstack/react-query';
 import {
-  messagesDataSelector,
-  sentMessagesDataSelector,
-  useFetchMessagesCallback,
-  useFetchSentMessagesCallback,
-  useDeleteMessageCallback,
-  useBlastMessageCallback,
-} from '../services/state/selectors/messagesSelectors';
-
-// Custom Hooks
-import { useRecoilLoader } from '../hooks/useRecoilLoader';
+  queryKeys,
+  useFutureMessages,
+  useSentMessages,
+  useDeleteMessage,
+  useBlastMessage,
+} from '@services/queries';
 
 // PrimeReact UI components
 import { Card } from 'primereact/card';
@@ -46,20 +42,14 @@ const ManageMessages = () => {
   const { confirmPopup } = useConfirm();
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const deleteMessageCallback = useDeleteMessageCallback();
-  const blastMessageCallback = useBlastMessageCallback();
-  const fetchMessagesCallback = useFetchMessagesCallback();
-  const fetchSentMessagesCallback = useFetchSentMessagesCallback();
+  const queryClient = useQueryClient();
+  const deleteMessageMutation = useDeleteMessage();
+  const blastMessageMutation = useBlastMessage();
 
-  const { data: futureMessages, isLoading: isFutureLoading } = useRecoilLoader(
-    messagesAtom,
-    messagesDataSelector
-  );
-
-  const { data: sentMessages, isLoading: isSentLoading } = useRecoilLoader(
-    sentMessagesAtom,
-    sentMessagesDataSelector
-  );
+  const { data: futureMessages = [], isLoading: isFutureLoading } =
+    useFutureMessages();
+  const { data: sentMessages = [], isLoading: isSentLoading } =
+    useSentMessages();
 
   // Log messages whenever they change
   React.useEffect(() => {
@@ -75,7 +65,7 @@ const ManageMessages = () => {
     id: number
   ) => {
     try {
-      await deleteMessageCallback(id);
+      await deleteMessageMutation.mutateAsync(id);
       showToast({
         severity: 'info',
         summary: t('message deleted successfully'),
@@ -105,7 +95,7 @@ const ManageMessages = () => {
     id: number
   ) => {
     try {
-      await blastMessageCallback(id);
+      await blastMessageMutation.mutateAsync(id);
       showToast({
         severity: 'success',
         summary: t('message sent successfully'),
@@ -142,7 +132,7 @@ const ManageMessages = () => {
 
   const onSubmit = (result: MessageInterface) => {
     const summary = t('message updated successfully');
-    fetchMessagesCallback();
+    queryClient.invalidateQueries({ queryKey: queryKeys.messages.future });
     showToast({ severity: 'info', summary });
     hideDialog();
   };

@@ -1,5 +1,5 @@
 // React + Locale
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Global Contexts
@@ -7,20 +7,13 @@ import { useToast } from '@context/ToastContext';
 import { useDialog } from '@context/DialogContext';
 import { useConfirm } from '@components/context/ConfirmContext';
 
-// State (Recoil)
+// State (Query)
+import { useQueryClient } from '@tanstack/react-query';
 import {
-  useRecoilCallback,
-  useRecoilRefresher_UNSTABLE,
-  Snapshot,
-} from 'recoil';
-import {
-  cemeteriesAtom,
-  cemeteriesDataSelector,
-  deleteCemeterySelector,
-} from '@services/state';
-
-// Custom Hooks
-import { useRecoilLoader } from '@hooks/useRecoilLoader';
+  queryKeys,
+  useCemeteries,
+  useDeleteCemetery,
+} from '@services/queries';
 
 // PrimeReact UI components
 import { Card } from 'primereact/card';
@@ -40,12 +33,10 @@ const ManageCemeteries = () => {
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
 
-  const { data: cemeteries, isLoading: isCemeteriesLoading } = useRecoilLoader(
-    cemeteriesAtom,
-    cemeteriesDataSelector
-  );
-
-  const refreshCemeteries = useRecoilRefresher_UNSTABLE(cemeteriesDataSelector);
+  const queryClient = useQueryClient();
+  const deleteCemeteryMutation = useDeleteCemetery();
+  const { data: cemeteries = [], isLoading: isCemeteriesLoading } =
+    useCemeteries();
   const [filters, setFilters] = useState({
     global: { value: '', matchMode: FilterMatchMode.CONTAINS },
   });
@@ -57,14 +48,9 @@ const ManageCemeteries = () => {
     });
 
   // Methods
-  const confirmDelete = async (
-    snapshot: Snapshot,
-    release: () => void,
-    id: number
-  ) => {
+  const confirmDelete = async (id: number) => {
     try {
-      await snapshot.getPromise(deleteCemeterySelector(id));
-      refreshCemeteries();
+      await deleteCemeteryMutation.mutateAsync(id);
       showToast({
         severity: 'info',
         summary: 'בית עלמין נמחק בהצלחה',
@@ -76,26 +62,23 @@ const ManageCemeteries = () => {
         summary: 'ארעה שגיאה, בבקשה נסו שוב.',
       });
       return error;
-    } finally {
-      release();
     }
   };
-  const deleteCemetery = useRecoilCallback(
-    ({ snapshot }) =>
-      async (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
-        const release = snapshot.retain(); // Retain the snapshot
-        confirmPopup({
-          target: e.currentTarget,
-          message: 'למחוק את הבית עלמין הזה?',
-          icon: 'pi pi-exclamation-triangle text-yellow-800',
-          defaultFocus: 'accept',
-          acceptLabel: t('yes'),
-          rejectLabel: t('no'),
-          accept: async () => await confirmDelete(snapshot, release, id),
-          reject: () => console.log('Rejected'),
-        });
-      }
-  );
+  const deleteCemetery = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    confirmPopup({
+      target: e.currentTarget,
+      message: 'למחוק את הבית עלמין הזה?',
+      icon: 'pi pi-exclamation-triangle text-yellow-800',
+      defaultFocus: 'accept',
+      acceptLabel: t('yes'),
+      rejectLabel: t('no'),
+      accept: async () => await confirmDelete(id),
+      reject: () => console.log('Rejected'),
+    });
+  };
 
   const editCemetery = (data: CemeteryInterface | null) => {
     showDialog(
@@ -109,7 +92,7 @@ const ManageCemeteries = () => {
   const onSubmit = (result: CemeteryInterface) => {
     console.log('result: ', result);
     const summary = 'בית עלמין עודכן בהצלחה';
-    refreshCemeteries();
+    queryClient.invalidateQueries({ queryKey: queryKeys.cemeteries });
     showToast({ severity: 'info', summary });
     hideDialog();
   };

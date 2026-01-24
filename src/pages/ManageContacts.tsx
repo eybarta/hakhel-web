@@ -1,5 +1,5 @@
 // React + Locale
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Global Contexts
@@ -7,25 +7,14 @@ import { useToast } from '@components/context/ToastContext';
 import { useConfirm } from '@components/context/ConfirmContext';
 import { useDialog } from '@components/context/DialogContext';
 
-// State (Recoil)
+// State (Query)
+import { useQueryClient } from '@tanstack/react-query';
 import {
-  useRecoilCallback,
-  useRecoilRefresher_UNSTABLE,
-  Snapshot,
-} from 'recoil';
-
-import {
-  deceasedDataSelector,
-  cemeteriesDataSelector,
-  deceasedAtom,
-  cemeteriesAtom,
-  contactsDataSelector,
-  contactsAtom,
-  deleteContactsSelector,
-} from '@services/state';
-
-// Custom Hooks
-import { useRecoilLoader } from '@hooks/useRecoilLoader';
+  queryKeys,
+  useCemeteries,
+  useContacts,
+  useDeleteContact,
+} from '@services/queries';
 
 // Utils
 import useFindCemetery from '@utils/useFindCemetery';
@@ -49,32 +38,14 @@ const ManageContacts = () => {
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
 
-  const { data: contacts, isLoading: isContactsLoading } = useRecoilLoader(
-    contactsAtom,
-    contactsDataSelector
-  );
+  const queryClient = useQueryClient();
+  const deleteContactMutation = useDeleteContact();
+  const { data: contacts = [], isLoading: isContactsLoading } = useContacts();
+  const { data: cemeteries = [] } = useCemeteries();
 
-  const { data: deceasedPeople } = useRecoilLoader(
-    deceasedAtom,
-    deceasedDataSelector
-  );
-
-  const { data: cemeteries } = useRecoilLoader(
-    cemeteriesAtom,
-    cemeteriesDataSelector
-  );
-
-  const refreshContacts = useRecoilRefresher_UNSTABLE(contactsDataSelector);
-
-  const confirmDelete = async (
-    snapshot: Snapshot,
-    release: () => void,
-
-    id: number
-  ) => {
+  const confirmDelete = async (id: number) => {
     try {
-      await snapshot.getPromise(deleteContactsSelector(id));
-      refreshContacts();
+      await deleteContactMutation.mutateAsync(id);
       showToast({
         severity: 'info',
         summary: 'משתמש נמחק בהצלחה',
@@ -85,24 +56,21 @@ const ManageContacts = () => {
         severity: 'error',
         summary: 'ארעה שגיאה, בבקשה נסו שוב.',
       });
-    } finally {
-      release();
     }
   };
-  const deleteContact = useRecoilCallback(
-    ({ snapshot }) =>
-      async (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
-        const release = snapshot.retain();
-        confirmPopup({
-          target: e.currentTarget,
-          message: 'Are you sure you want to proceed?',
-          icon: 'pi pi-exclamation-triangle',
-          defaultFocus: 'accept',
-          accept: async () => await confirmDelete(snapshot, release, id),
-          reject: () => console.log('Rejected'),
-        });
-      }
-  );
+  const deleteContact = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    confirmPopup({
+      target: e.currentTarget,
+      message: 'Are you sure you want to proceed?',
+      icon: 'pi pi-exclamation-triangle',
+      defaultFocus: 'accept',
+      accept: async () => await confirmDelete(id),
+      reject: () => console.log('Rejected'),
+    });
+  };
 
   const editContact = (data: ContactInterface | null) => {
     showDialog(
@@ -117,7 +85,7 @@ const ManageContacts = () => {
   const onSubmit = (result: ContactInterface) => {
     console.log('result: ', result);
     const summary = 'פרטי משתמש עודכנו בהצלחה';
-    refreshContacts();
+    queryClient.invalidateQueries({ queryKey: queryKeys.contacts });
     showToast({ severity: 'info', summary });
     hideDialog();
   };

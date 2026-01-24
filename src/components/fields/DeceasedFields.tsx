@@ -4,8 +4,7 @@ import useSelectOptions from '@constants/selectOptions';
 import SelectField from './SelectField';
 import HebrewCalendar from '@components/HebrewCalendar';
 import { FormikValues } from 'formik';
-import { useRecoilValue } from 'recoil';
-import { cemeteryOptionsSelector } from '@services/state';
+import { useCemeteryOptions } from '@services/queries';
 
 interface DeceasedFieldsProps {
   scope?: string;
@@ -24,7 +23,7 @@ const DeceasedFields: React.FC<DeceasedFieldsProps> = ({
   const { t } = useTranslation();
   const fieldName = (field: string) => `${scope}${field}`;
   const { genderOptions, relationOptions } = useSelectOptions();
-  const cemeteriesOptions = useRecoilValue(cemeteryOptionsSelector);
+  const cemeteriesOptions = useCemeteryOptions();
 
   return (
     <div className='flex flex-col gap-3.5'>

@@ -1,9 +1,10 @@
 // TestAppProvider.tsx
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { ConfirmProvider } from '@components/context/ConfirmContext';
 import { ToastProvider } from '@components/context/ToastContext';
 import { DialogProvider } from '@components/context/DialogContext';
-import { RecoilRoot } from 'recoil';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { createQueryClient } from '../query/queryClient';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -12,8 +13,10 @@ interface TestAppProviderProps {
 }
 
 const TestAppProvider: React.FC<TestAppProviderProps> = ({ children }) => {
+  const [queryClient] = useState(createQueryClient);
+
   return (
-    <RecoilRoot>
+    <QueryClientProvider client={queryClient}>
       <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <Suspense fallback={<div>Loading...</div>}>
           <ToastProvider>
@@ -23,7 +26,7 @@ const TestAppProvider: React.FC<TestAppProviderProps> = ({ children }) => {
           </ToastProvider>
         </Suspense>
       </ErrorBoundary>
-    </RecoilRoot>
+    </QueryClientProvider>
   );
 };
 

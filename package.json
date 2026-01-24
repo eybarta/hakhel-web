@@ -12,6 +12,9 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.90.22",
+    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query-persist-client": "^5.90.22",
     "@types/lodash": "^4.17.5",
     "axios": "^1.7.2",
     "date-fns": "^4.1.0",
@@ -27,9 +30,9 @@
     "react-error-boundary": "^4.0.13",
     "react-i18next": "^14.1.2",
     "react-router-dom": "^6.23.1",
-    "recoil": "^0.7.7",
     "tailwind-merge": "^2.3.0",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
@@ -61,5 +64,6 @@
     "ts-jest": "^29.1.5",
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
-  }
+  },
+  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f"
 }

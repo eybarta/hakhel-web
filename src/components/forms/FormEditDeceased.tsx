@@ -7,8 +7,7 @@ import HebrewCalendar from '@components/HebrewCalendar.tsx';
 import { saveDeceased } from '@services/api/deceasedApi';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { defaultDeceasedValues } from '@constants/defaultValues';
-import { useRecoilValue } from 'recoil';
-import { cemeteryOptionsSelector } from '@services/state';
+import { useCemeteryOptions } from '@services/queries';
 import { DeceasedPersonInterface } from '@type/deceasedInterface';
 import useHasErrors from '@utils/useHasErrors';
 import { burialFields } from '@constants/cemeteryFields';
@@ -53,7 +52,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
   submit,
 }: FormEditDeceasedProps) => {
   const { t } = useTranslation();
-  const cemeteriesOptions = useRecoilValue(cemeteryOptionsSelector);
+  const cemeteriesOptions = useCemeteryOptions();
   const { genderOptions } = useSelectOptions();
 
   const initialValues = parseInitialValues(propValues);

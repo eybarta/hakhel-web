@@ -1,5 +1,5 @@
 // React + Locale
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Types
@@ -10,23 +10,14 @@ import { useToast } from '@components/context/ToastContext';
 import { useConfirm } from '@components/context/ConfirmContext';
 import { useDialog } from '@components/context/DialogContext';
 
-// State (Recoil)
+// State (Query)
+import { useQueryClient } from '@tanstack/react-query';
 import {
-  useRecoilCallback,
-  useRecoilRefresher_UNSTABLE,
-  Snapshot,
-} from 'recoil';
-
-import {
-  deceasedDataSelector,
-  deleteDeceasedSelector,
-  cemeteriesDataSelector,
-  deceasedAtom,
-  cemeteriesAtom,
-} from '@services/state';
-
-// Custom Hooks
-import { useRecoilLoader } from '@hooks/useRecoilLoader';
+  queryKeys,
+  useCemeteries,
+  useDeceased,
+  useDeleteDeceased,
+} from '@services/queries';
 
 // Utils
 import useFindCemetery from '@utils/useFindCemetery';
@@ -51,27 +42,15 @@ const ManageDeceased = () => {
   const { showDialog, hideDialog } = useDialog();
   const { confirmPopup } = useConfirm();
   
-  const { data: deceasedPeople, isLoading: isDeceasedLoading } = useRecoilLoader(
-    deceasedAtom,
-    deceasedDataSelector
-  );
-  
-  const { data: cemeteries } = useRecoilLoader(
-    cemeteriesAtom,
-    cemeteriesDataSelector
-  );
+  const queryClient = useQueryClient();
+  const deleteDeceasedMutation = useDeleteDeceased();
+  const { data: deceasedPeople = [], isLoading: isDeceasedLoading } =
+    useDeceased();
+  const { data: cemeteries = [] } = useCemeteries();
 
-  const refreshDeceased = useRecoilRefresher_UNSTABLE(deceasedDataSelector);
-
-  const confirmDelete = async (
-    snapshot: Snapshot,
-    release: () => void,
-
-    id: number
-  ) => {
+  const confirmDelete = async (id: number) => {
     try {
-      await snapshot.getPromise(deleteDeceasedSelector(id));
-      refreshDeceased();
+      await deleteDeceasedMutation.mutateAsync(id);
       showToast({
         severity: 'info',
         summary: 'נפטר נמחק בהצלחה',
@@ -82,24 +61,21 @@ const ManageDeceased = () => {
         severity: 'error',
         summary: 'ארעה שגיאה, בבקשה נסו שוב.',
       });
-    } finally {
-      release();
     }
   };
-  const deleteDeceased = useRecoilCallback(
-    ({ snapshot }) =>
-      async (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
-        const release = snapshot.retain();
-        confirmPopup({
-          target: e.currentTarget,
-          message: 'Are you sure you want to proceed?',
-          icon: 'pi pi-exclamation-triangle',
-          defaultFocus: 'accept',
-          accept: async () => await confirmDelete(snapshot, release, id),
-          reject: () => console.log('Rejected'),
-        });
-      }
-  );
+  const deleteDeceased = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    confirmPopup({
+      target: e.currentTarget,
+      message: 'Are you sure you want to proceed?',
+      icon: 'pi pi-exclamation-triangle',
+      defaultFocus: 'accept',
+      accept: async () => await confirmDelete(id),
+      reject: () => console.log('Rejected'),
+    });
+  };
 
   const editDeceased = (data: DeceasedPersonInterface | null) => {
     showDialog(
@@ -114,7 +90,7 @@ const ManageDeceased = () => {
   const onSubmit = (result: DeceasedPersonInterface) => {
     console.log('result: ', result);
     const summary = 'פרטי נפטר עודכנו בהצלחה';
-    refreshDeceased();
+    queryClient.invalidateQueries({ queryKey: queryKeys.deceased });
     showToast({ severity: 'info', summary });
     hideDialog();
   };
