@@ -3,8 +3,17 @@ import axios from 'axios';
 
 const API_URL = 'https://hakhel-c99c0466c9a2.herokuapp.com/api/v1/auth';
 
+export interface LoginResponse {
+  token?: string;
+  error?: string;
+  [key: string]: unknown;
+}
+
 // Function to log in the user
-export const login = async (email: string, password: string) => {
+export const login = async (
+  email: string,
+  password: string
+): Promise<LoginResponse> => {
   try {
     const response = await axios.post(
       API_URL,
@@ -21,7 +30,7 @@ export const login = async (email: string, password: string) => {
     if (response.data.token) {
       localStorage.setItem('hakhel_usertoken', response.data.token);
     }
-    return response.data;
+    return response.data as LoginResponse;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error('Login error:', error.response.data);

@@ -1,4 +1,11 @@
 import { Formik, Form, Field } from 'formik';
+import type {
+  FieldProps,
+  FormikErrors,
+  FormikHelpers,
+  FormikTouched,
+  FormikValues,
+} from 'formik';
 import * as Yup from 'yup';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
@@ -8,7 +15,8 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 
 import { classNames } from 'primereact/utils';
-import { login } from '/src/services/authService.ts';
+import type { AxiosError } from 'axios';
+import { login, type LoginResponse } from '@services/authService';
 import { useTranslation } from 'react-i18next';
 
 interface loginInterface {
@@ -26,38 +34,44 @@ const validationSchema = Yup.object({
 });
 
 const LoginForm = () => {
-  const { t, i18n } = useTranslation();
-  const getFormErrorMessage = (name, touched, errors) => {
-    return (name === 'server' || touched[name]) && errors[name] ? (
+  const { t } = useTranslation();
+  const getFormErrorMessage = (
+    name: keyof loginInterface,
+    touched: FormikTouched<loginInterface>,
+    errors: FormikErrors<loginInterface>
+  ) => {
+    return touched[name] && errors[name] ? (
       <small className='p-error'>{errors[name]}</small>
     ) : (
       <small />
     );
   };
+
+  const getServerErrorMessage = (status?: { server?: string }) =>
+    status?.server ? <small className='p-error'>{status.server}</small> : <small />;
   const submitHandler = async (
     data: loginInterface,
-    { setSubmitting, setErrors }
+    { setSubmitting, setStatus }: FormikHelpers<loginInterface>
   ) => {
     setSubmitting(true);
     // Simulate submitting the data
 
     try {
       const { email, password } = data;
-      const response = await login(email, password);
+      const response: LoginResponse = await login(email, password);
 
       if (response.error) {
-        setErrors({
-          server: 'Failed to login. Please check your credentials.',
-        });
+        setStatus({ server: 'Failed to login. Please check your credentials.' });
       }
       // Redirect to homepage or dashboard after successful login
       window.location.href = '/';
     } catch (error) {
+      const axiosError = error as AxiosError<{ error?: string }>;
       const errorMessage =
-        error?.response?.data?.error ||
+        axiosError.response?.data?.error ||
         'Failed to login. Please check your credentials.';
 
-      setErrors({ server: errorMessage });
+      setStatus({ server: errorMessage });
     }
     setSubmitting(false);
   };
@@ -74,19 +88,11 @@ const LoginForm = () => {
           validationSchema={validationSchema}
           onSubmit={submitHandler}
         >
-          {({
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            isSubmitting,
-          }) => (
+          {({ handleSubmit, errors, touched, isSubmitting, status }) => (
             <Form className='flex flex-col gap-3.5' onSubmit={handleSubmit}>
               <div>
                 <Field name='email'>
-                  {({ field, form }) => (
+                  {({ field, form }: FieldProps<string>) => (
                     <IconField iconPosition='right'>
                       <InputIcon className='pi pi-user'> </InputIcon>
                       <InputText
@@ -105,7 +111,7 @@ const LoginForm = () => {
               </div>
               <div>
                 <Field name='password'>
-                  {({ field, form }) => (
+                  {({ field }: FieldProps<string>) => (
                     <IconField iconPosition='right'>
                       <InputIcon className='pi pi-lock'> </InputIcon>
                       <InputText
@@ -119,7 +125,7 @@ const LoginForm = () => {
                 </Field>
                 {getFormErrorMessage('password', touched, errors)}
               </div>
-              {getFormErrorMessage('server', touched, errors)}
+              {getServerErrorMessage(status as { server?: string } | undefined)}
 
               <Button
                 type='submit'
@@ -135,8 +141,8 @@ const LoginForm = () => {
   );
 };
 
-function isFieldInvalid(form, field) {
-  return form.touched[field] && form.errors[field];
+function isFieldInvalid(form: FormikValues, field: string) {
+  return Boolean(form.touched?.[field] && form.errors?.[field]);
 }
 
 export default LoginForm;

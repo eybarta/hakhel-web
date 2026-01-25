@@ -1,7 +1,7 @@
 // i18n.js
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import commonHE from '/src/locales/he/common.json';
+import commonHE from './locales/he/common.json';
 import validationHE from './locales/he/validation.json';
 import relationsHE from './locales/he/relations.json';
 

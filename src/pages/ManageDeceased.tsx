@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import type { DeceasedPersonInterface } from '@type/deceasedInterface';
 
 // Global Contexts
-import { useToast } from '@components/context/ToastContext';
-import { useConfirm } from '@components/context/ConfirmContext';
-import { useDialog } from '@components/context/DialogContext';
+import { useToast } from '@components/context/useToast';
+import { useConfirm } from '@components/context/useConfirm';
+import { useDialog } from '@components/context/useDialog';
 
 // State (Query)
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,10 +31,7 @@ import { FilterMatchMode } from 'primereact/api';
 import DataTableWrapper from '@components/table/DataTableWrapper';
 import RowActions from '@components/table/RowActions';
 import FormEditDeceased from '@components/forms/FormEditDeceased';
-import ManageDeceasedTableHeader from '@components/table/templates/ManageDeceasedTableHeader';
 import ManageTableHeader from '@components/table/templates/ManageTableHeader';
-import { Button } from 'primereact/button';
-import { ContactInterface } from '@type/contactsInterface';
 
 const ManageDeceased = () => {
   const { t } = useTranslation();

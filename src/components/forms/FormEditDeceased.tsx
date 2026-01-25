@@ -97,6 +97,7 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
             touched,
             isSubmitting,
             setTouched,
+            submitCount,
           }) => (
             <Form
               onSubmit={async e => {
@@ -196,15 +197,11 @@ const FormEditDeceased: React.FC<FormEditDeceasedProps> = ({
                   }}
                   leftIcon='pi pi-users ml-2'
                 >
-                  <FormEditContactList
-                    values={values}
-                    errors={errors}
-                    touched={touched}
-                  />
+                  <FormEditContactList values={values} />
                 </TabPanel>
               </TabView>
               <div className='px-5'>
-                <FormError errors={errors} isSubmitting={isSubmitting} />
+                <FormError errors={errors} submitCount={submitCount} />
                 <Button
                   type='submit'
                   label={t('save')}

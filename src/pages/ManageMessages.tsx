@@ -6,9 +6,9 @@ import { format } from 'date-fns';
 import { MessageInterface } from '../types/messagesInterface';
 
 // Global Contexts
-import { useToast } from '../components/context/ToastContext';
-import { useConfirm } from '../components/context/ConfirmContext';
-import { useDialog } from '../components/context/DialogContext';
+import { useToast } from '../components/context/useToast';
+import { useConfirm } from '../components/context/useConfirm';
+import { useDialog } from '../components/context/useDialog';
 
 // State (Query)
 import { useQueryClient } from '@tanstack/react-query';
@@ -24,10 +24,8 @@ import {
 import { Card } from 'primereact/card';
 import { FilterMatchMode } from 'primereact/api';
 import { Tag } from 'primereact/tag';
-import { Column } from 'primereact/column';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
-import { Tooltip } from 'primereact/tooltip';
 
 // App Components
 import DataTableWrapper from '../components/table/DataTableWrapper';
@@ -60,10 +58,7 @@ const ManageMessages = () => {
     return format(new Date(dateString), 'MM/dd/yyyy, h:mma').toLowerCase();
   };
 
-  const confirmDelete = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    id: number
-  ) => {
+  const confirmDelete = async (id: number) => {
     try {
       await deleteMessageMutation.mutateAsync(id);
       showToast({
@@ -85,15 +80,12 @@ const ManageMessages = () => {
       message: t('are you sure you want to delete this message?'),
       icon: 'pi pi-exclamation-triangle',
       defaultFocus: 'accept',
-      accept: () => confirmDelete(e, id),
+      accept: () => confirmDelete(id),
       reject: () => console.log('Rejected'),
     });
   };
 
-  const confirmBlast = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    id: number
-  ) => {
+  const confirmBlast = async (id: number) => {
     try {
       await blastMessageMutation.mutateAsync(id);
       showToast({
@@ -115,7 +107,7 @@ const ManageMessages = () => {
       message: t('confirm send now'),
       icon: 'pi pi-send',
       defaultFocus: 'accept',
-      accept: () => confirmBlast(e, id),
+      accept: () => confirmBlast(id),
       reject: () => console.log('Rejected'),
     });
   };
@@ -130,7 +122,7 @@ const ManageMessages = () => {
     );
   };
 
-  const onSubmit = (result: MessageInterface) => {
+  const onSubmit = () => {
     const summary = t('message updated successfully');
     queryClient.invalidateQueries({ queryKey: queryKeys.messages.future });
     showToast({ severity: 'info', summary });

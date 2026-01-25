@@ -3,22 +3,19 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Global Contexts
-import { useToast } from '@components/context/ToastContext';
-import { useConfirm } from '@components/context/ConfirmContext';
-import { useDialog } from '@components/context/DialogContext';
+import { useToast } from '@components/context/useToast';
+import { useConfirm } from '@components/context/useConfirm';
+import { useDialog } from '@components/context/useDialog';
 
 // State (Query)
 import { useQueryClient } from '@tanstack/react-query';
 import {
   queryKeys,
-  useCemeteries,
   useContacts,
   useDeleteContact,
 } from '@services/queries';
 
 // Utils
-import useFindCemetery from '@utils/useFindCemetery';
-
 // PrimeReact UI components
 import { Card } from 'primereact/card';
 import { FilterMatchMode } from 'primereact/api';
@@ -27,7 +24,6 @@ import { FilterMatchMode } from 'primereact/api';
 import DataTableWrapper from '@components/table/DataTableWrapper';
 import RowActions from '@components/table/RowActions';
 import FormEditContact from '@components/forms/FormEditContact';
-import { Button } from 'primereact/button';
 import { ContactInterface } from '@type/contactsInterface';
 import { RelationToDeceasedServerInterface } from '@type/relationshipsInterface';
 import ManageTableHeader from '@components/table/templates/ManageTableHeader';
@@ -41,7 +37,6 @@ const ManageContacts = () => {
   const queryClient = useQueryClient();
   const deleteContactMutation = useDeleteContact();
   const { data: contacts = [], isLoading: isContactsLoading } = useContacts();
-  const { data: cemeteries = [] } = useCemeteries();
 
   const confirmDelete = async (id: number) => {
     try {
@@ -112,28 +107,6 @@ const ManageContacts = () => {
     );
   };
 
-  // util
-  const findCemetery = useFindCemetery(cemeteries);
-
-  // const editContact = (contact: ContactInterface) => {
-  //   console.log('editContact: ', contact);
-  // };
-  const contactCardFooter = (contact: ContactInterface) => {
-    console.log('contact: ', contact);
-    return (
-      <div className='w-full flex flex-row-reverse'>
-        <Button
-          icon='pi pi-pencil'
-          rounded
-          text
-          size='small'
-          severity='secondary'
-          aria-label='Edit Contact'
-          onClick={() => editContact(contact)}
-        />
-      </div>
-    );
-  };
   const rowExpansionTemplate = (data: ContactInterface) => {
     console.log('data.relations: ', data.relations);
     const { relations } = data;

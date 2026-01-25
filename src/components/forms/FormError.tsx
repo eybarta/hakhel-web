@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 
 interface FormErrorProps {
   errors: FormikErrors<{ [key: string]: any }>;
-  isSubmitting: boolean;
+  submitCount: number;
 }
 
-const FormError: React.FC<FormErrorProps> = ({ errors, isSubmitting }) => {
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-
+const FormError: React.FC<FormErrorProps> = ({ errors, submitCount }) => {
   const { t } = useTranslation();
 
   const hasErrors = Object.keys(errors).length > 0;
-
-  useEffect(() => {
-    isSubmitting && setHasSubmitted(true);
-  }, [isSubmitting]);
+  const hasSubmitted = submitCount > 0;
 
   return (
     hasSubmitted &&

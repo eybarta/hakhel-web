@@ -10,7 +10,7 @@ type DataType = {
 };
 
 const useExpanderColumn = <T extends DataType>(
-  expanderProp: keyof T,
+  expanderProp: keyof T & string,
   disableEmpty: boolean = false
 ) => {
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ const useExpanderColumn = <T extends DataType>(
         );
       },
     }),
-    []
+    [disableEmpty, expanderProp, t]
   );
 };
 

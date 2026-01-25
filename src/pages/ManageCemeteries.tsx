@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Global Contexts
-import { useToast } from '@context/ToastContext';
-import { useDialog } from '@context/DialogContext';
-import { useConfirm } from '@components/context/ConfirmContext';
+import { useToast } from '@components/context/useToast';
+import { useDialog } from '@components/context/useDialog';
+import { useConfirm } from '@components/context/useConfirm';
 
 // State (Query)
 import { useQueryClient } from '@tanstack/react-query';

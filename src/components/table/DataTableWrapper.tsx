@@ -1,5 +1,5 @@
 // components/DataTableWrapper.tsx
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { Column, ColumnProps } from 'primereact/column';
 import type { FilterMatchMode } from 'primereact/api';
@@ -15,7 +15,7 @@ interface DataTableWrapperProps<T> {
   headerTemplate: ReactNode;
   emptyMessage?: string;
   withExpand?: boolean;
-  expanderProp?: string;
+  expanderProp?: keyof T;
   rowExpansionTemplate?: (data: T) => ReactNode;
 }
 const DataTableWrapper = <T extends object>({
@@ -34,7 +34,8 @@ const DataTableWrapper = <T extends object>({
   const [expandedRows, setExpandedRows] = useState<
     DataTableExpandedRows | undefined
   >(undefined);
-  const expanderColumn = useExpanderColumn(expanderProp);
+  const expanderKey = (expanderProp ?? 'id') as keyof T & string;
+  const expanderColumn = useExpanderColumn(expanderKey);
 
   return (
     <DataTable

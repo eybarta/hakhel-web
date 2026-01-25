@@ -1,9 +1,7 @@
-import React, { ReactNode } from 'react';
 import { fireEvent, waitFor, within } from '@testing-library/react';
 import { render, screen } from './test-utils'; // Use your custom render
 import '@testing-library/jest-dom';
 import ManageDeceased from '../pages/ManageDeceased';
-import TableHeader from '@components/table/TableHeader';
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,

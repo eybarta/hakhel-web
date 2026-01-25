@@ -1,24 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  ReactElement,
-} from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
-
-interface DialogContextType {
-  showDialog: (content: ReactElement) => void;
-  hideDialog: () => void;
-}
-
-interface DialogConfig {
-  visible: boolean;
-  blockScroll: boolean;
-  content: ReactElement | null;
-}
-
-const DialogContext = createContext<DialogContextType | null>(null);
+import { DialogContext, DialogConfig } from './dialogContext';
 
 export const DialogProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -50,12 +32,4 @@ export const DialogProvider: React.FC<{ children: ReactNode }> = ({
       ></Dialog>
     </DialogContext.Provider>
   );
-};
-
-export const useDialog = (): DialogContextType => {
-  const context = useContext(DialogContext);
-  if (!context) {
-    throw new Error('useDialog must be used within a DialogProvider');
-  }
-  return context;
 };

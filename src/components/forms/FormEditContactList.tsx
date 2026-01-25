@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FieldArray, FormikProps, FormikValues } from 'formik';
+import { FieldArray, FormikValues } from 'formik';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
 import { RelationToContactClientInterface } from '@type/relationshipsInterface';
@@ -7,7 +7,11 @@ import { defaultRelationToContact } from '@constants/defaultValues';
 import ContactFields from '@components/fields/ContactFields';
 import TabHeader from '@components/TabHeader';
 
-const FormEditContactList = ({ values }: FormikProps<FormikValues>) => {
+interface FormEditContactListProps {
+  values: FormikValues;
+}
+
+const FormEditContactList = ({ values }: FormEditContactListProps) => {
   const { t } = useTranslation();
   return (
     <FieldArray name='relations_attributes'>

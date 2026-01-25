@@ -1,20 +1,18 @@
-import React, { useRef } from 'react';
-import { Field, FieldProps, FieldHookConfig } from 'formik';
+import React from 'react';
+import { Field, FieldProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Options } from '@type/options';
 import { Dropdown } from 'primereact/dropdown';
 
 interface SelectFieldProps {
   label?: string;
-  name?: string;
-  value?: string | number | undefined;
+  name: string;
   options: Options;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
   label,
   name,
-  value,
   options,
   // ...props
 }) => {

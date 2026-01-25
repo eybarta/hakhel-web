@@ -2,9 +2,9 @@ import './App.css';
 import AppRoutes from './AppRoutes';
 import AppLayout from './layout/AppLayout';
 import TopBar from '@components/TopBar';
-import { ConfirmProvider } from '@components/context/ConfirmContext';
-import { ToastProvider } from '@components/context/ToastContext';
-import { DialogProvider } from '@components/context/DialogContext';
+import { ConfirmProvider } from '@components/context/ConfirmProvider';
+import { ToastProvider } from '@components/context/ToastProvider';
+import { DialogProvider } from '@components/context/DialogProvider';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

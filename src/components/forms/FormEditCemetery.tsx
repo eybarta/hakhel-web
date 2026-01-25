@@ -1,4 +1,4 @@
-import { Formik, Form, FormikHelpers } from 'formik';
+import { Formik, Form } from 'formik';
 import { Card } from 'primereact/card';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
@@ -71,7 +71,14 @@ const FormEditCemetery = ({
           validationSchema={validationSchema}
           onSubmit={submitHandler}
         >
-          {({ handleSubmit, errors, touched, setTouched, isSubmitting }) => (
+          {({
+            handleSubmit,
+            errors,
+            touched,
+            setTouched,
+            isSubmitting,
+            submitCount,
+          }) => (
             <Form
               onSubmit={async e => {
                 e.preventDefault();
@@ -118,10 +125,7 @@ const FormEditCemetery = ({
               </TabView>
 
               <div className='px-5'>
-                <FormError
-                  errors={errors}
-                  isSubmitting={isSubmitting}
-                ></FormError>
+                <FormError errors={errors} submitCount={submitCount} />
                 <Button
                   type='submit'
                   label={t('save')}

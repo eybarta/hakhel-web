@@ -1,37 +1,29 @@
 import React from 'react';
-import { Field, FieldProps, FieldHookConfig } from 'formik';
-import { InputText, InputTextProps } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
+import { Field, FieldProps } from 'formik';
+import { InputText } from 'primereact/inputtext';
 import { useTranslation } from 'react-i18next';
 
-interface InputTextFieldProps extends InputTextProps {
+interface InputNumberFieldProps {
   label?: string;
   name: string;
-  value: string | number;
 }
 
-const InputTextField: React.FC<
-  InputTextFieldProps & FieldHookConfig<string>
-> = ({ label, ...props }) => {
+const InputNumberField: React.FC<InputNumberFieldProps> = ({ label, name }) => {
   const { t } = useTranslation();
   return (
-    <Field name={props.name}>
+    <Field name={name}>
       {({ field, form, meta }: FieldProps<string>) => (
         <div className='flex-1'>
           {label && (
-            <label
-              className='block mb-1 font-semibold'
-              htmlFor={props.id || props.name}
-            >
+            <label className='block mb-1 font-semibold' htmlFor={name}>
               {t(label)}
             </label>
           )}
           <InputText
-            id={props.id || props.name}
-            className={classNames(props.className, {
-              'p-invalid': meta.touched && meta.error,
-            })}
-            value={props.value || ''}
+            id={name}
+            className={meta.touched && meta.error ? 'p-invalid' : ''}
+            {...field}
+            value={field.value ?? ''}
             onChange={e => {
               form.setFieldValue(field.name, e.target.value);
               form.setFieldTouched(field.name, true, false);
@@ -47,4 +39,4 @@ const InputTextField: React.FC<
   );
 };
 
-export default InputTextField;
+export default InputNumberField;

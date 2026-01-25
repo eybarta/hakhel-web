@@ -1,8 +1,8 @@
 // TestAppProvider.tsx
 import React, { ReactNode, useState } from 'react';
-import { ConfirmProvider } from '@components/context/ConfirmContext';
-import { ToastProvider } from '@components/context/ToastContext';
-import { DialogProvider } from '@components/context/DialogContext';
+import { ConfirmProvider } from '@components/context/ConfirmProvider';
+import { ToastProvider } from '@components/context/ToastProvider';
+import { DialogProvider } from '@components/context/DialogProvider';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createQueryClient } from '../query/queryClient';
 import { Suspense } from 'react';

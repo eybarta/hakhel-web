@@ -1,4 +1,4 @@
-import { FieldArray, FormikProps, FormikValues } from 'formik';
+import { FieldArray, FormikValues } from 'formik';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,11 @@ import { RelationToDeceasedClientInterface } from '@type/relationshipsInterface'
 import DeceasedFields from '@components/fields/DeceasedFields';
 import { defaultRelationToDeceased } from '@constants/defaultValues';
 import TabHeader from '@components/TabHeader';
-const FormEditDeceasedList = ({ values }: FormikProps<FormikValues>) => {
+interface FormEditDeceasedListProps {
+  values: FormikValues;
+}
+
+const FormEditDeceasedList = ({ values }: FormEditDeceasedListProps) => {
   const { t } = useTranslation();
   return (
     <FieldArray name='relations_attributes'>

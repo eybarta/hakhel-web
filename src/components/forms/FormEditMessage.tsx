@@ -61,7 +61,15 @@ const FormEditMessage: React.FC<FormEditMessageProps> = ({
             }
           }}
         >
-          {({ values, handleSubmit, errors, touched, isSubmitting, setFieldValue }) => (
+          {({
+            values,
+            handleSubmit,
+            errors,
+            touched,
+            isSubmitting,
+            setFieldValue,
+            submitCount,
+          }) => (
             <Form
               onSubmit={async e => {
                 e.preventDefault();
@@ -133,7 +141,7 @@ const FormEditMessage: React.FC<FormEditMessageProps> = ({
                   />
                 </div>
               </div>
-              <FormError errors={errors} isSubmitting={isSubmitting} />
+              <FormError errors={errors} submitCount={submitCount} />
             </Form>
           )}
         </Formik>

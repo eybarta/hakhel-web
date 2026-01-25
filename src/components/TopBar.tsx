@@ -1,6 +1,4 @@
 import { Menubar } from 'primereact/menubar';
-import { Button } from 'primereact/button';
-import { classNames } from 'primereact/utils';
 
 export default function TopBar() {
   const items = [
